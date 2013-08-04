@@ -1,0 +1,25 @@
+
+<table class="table">
+  <tr>
+    <th>Provider</th>
+    <th>Ingest Number</th>
+    <th>Last Ingest Date</th>
+    <th>Added</th>
+    <th>Deleted</th>
+    <th>Changed</th>
+    <th>Report</th>
+  </tr>
+
+  <% @providers.each do |p| %>
+  <tr>
+    <td><%= p['key'] %></td>
+    <td><%= p['value'] %></td>
+    <td><%= nice_time(p['doc']['ingestDate']) %></td>
+    <td><%= p['doc']['countAdded'] %></td>
+    <td><%= p['doc']['countDeleted'] %></td>
+    <td><%= p['doc']['countChanged'] %></td>
+    <td><%= link_to "Reports", {:controller => "reporting", :action => "provider", :id => p['id']} %></td>
+  </tr>
+  <% end %>
+</table>
+

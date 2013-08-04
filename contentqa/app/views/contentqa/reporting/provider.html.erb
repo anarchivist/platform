@@ -1,0 +1,38 @@
+
+<h1>Reports : <%= @ingest['provider'] %></h1>
+
+<div class="row span12">
+<div class="span6">
+<dl class="dl-horizontal">
+  <dt>Provider</dt>
+  <dd><%= @ingest['provider'] %></dd>
+  <dt>Ingest Sequence</dt>
+  <dd><%= @ingest['ingestionSequence'] %></dd>
+  <dt>Ingest Date</dt>
+  <dd><%= nice_time(@ingest['ingestDate']) %></dd>
+</dl>
+</div>
+<div class="span6">
+<dl class="dl-horizontal">
+  <dt>Added</dt>
+  <dd><%= @ingest['countAdded'] %></dd>
+  <dt>Deleted</dt>
+  <dd><%= @ingest['countDeleted'] %></dd>
+  <dt>Changed</dt>
+  <dd><%= @ingest['countChanged'] %></dd>
+</dl>
+</div>
+</div>
+
+<table class="table">
+  <tr>
+    <th>Report</th>
+    <th>Status</th>
+  </tr>
+  <% @report_types.each do |rt| %>
+  <tr>
+    <td><%= rt %></td>
+    <td><%= report_link(@reports[rt], @ingest, rt) %> <small><%= report_details(@reports[rt]) %></small></td>
+  </tr>
+  <% end %>
+</table>
