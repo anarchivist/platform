@@ -19,6 +19,7 @@ module Contentqa
     end
 
     def create
+#      Reports.delay.create_report(params[:id], params[:report_type])
       Reports.create_report(params[:id], params[:report_type])
       redirect_to :controller => "reporting", :action => "provider", :id => params[:id]
     end
@@ -26,7 +27,7 @@ module Contentqa
     def download
       path = Reports.report_path params[:id], params[:report_type]
       if path
-        send_file path, :type=>"application/csv" 
+        send_file path, :type => "text/csv", :filename => params[:report_type]
       else
         render status: :forbidden, text: "Access denied"
       end

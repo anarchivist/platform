@@ -9,7 +9,7 @@ module Contentqa
       if report_file
         link_to "Download", {:controller => "reporting", :action => "download", :id => ingest['_id'], :report_type => report_type}
       else
-        link_to "Create Report", {:controller => "reporting", :action => "create", :id => ingest['_id'], :report_type => report_type}
+        link_to "Create Report", {:controller => "reporting", :action => "create", :remote => true, :id => ingest['_id'], :report_type => report_type}
       end
     end
 

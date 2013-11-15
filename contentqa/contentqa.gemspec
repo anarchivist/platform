@@ -21,4 +21,8 @@ Gem::Specification.new do |s|
 
   s.add_dependency "httparty"
   s.add_dependency "twitter-bootstrap-rails"
+  s.add_dependency "couchrest", '1.1.3'
+  s.add_dependency "delayed_job"
+  s.add_dependency "delayed_job_couchrest_model"
+
 end
