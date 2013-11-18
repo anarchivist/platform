@@ -9,8 +9,8 @@ module Contentqa
 
 #    @dpla_db = CouchRest.database("http://162.209.12.195:5984/dpla")
 #    @dashboard_db = CouchRest.database("http://162.209.12.195:5984/dashboard")
-       @dpla_db = CouchRest.database("http://camp.dpla.berkman.temphost.net:5970/dpla")
-       @dashboard_db = CouchRest.database("http://camp.dpla.berkman.temphost.net:5970/dashboard")
+     @dpla_db = CouchRest.database("http://camp.dpla.berkman.temphost.net:5981/dpla")
+     @dashboard_db = CouchRest.database("http://camp.dpla.berkman.temphost.net:5981/dashboard")
 
 
     # Get the document describing an ingest from the dashboard database
@@ -40,28 +40,36 @@ module Contentqa
       output
     end
 
-    # Has a particular report been generated?
-    # TODO: Change - this is not just returning true/false
+    # Get a File::Stat object for the report if it has been generated
     def self.report_exists? (id, view)
       path = report_path id, view
       File.stat(path) if path and File.exists? path 
     end
 
     def self.is_safe_path? (path)
-      base_path = "/tmp/camp70/reports"
+      base_path = "/tmp/camp81/reports"
       path.match Regexp.new('^' + Regexp.escape(base_path))
     end
     
     # Get the path on disk where report would exists. Reports are organized by ingestion document id and report name
     def self.report_path (id, view)
-      base_path = "/tmp/camp70/reports"
+      base_path = "/tmp/camp81/reports"
       path = File.expand_path(File.join(base_path, id, view))
       path if is_safe_path?(path) and find_report_types.include? view
+    end
+
+    # Remove the provider from the row key
+    def self.filter(row)
+       filtered_row = {:key => row['key'].last, :value => row['value']} 
     end
     
     # Convert one line of a key/value JSON response pair into a line for a CSV file
     def self.csvify (row)
-      "\"%{key}\",\"%{value}\"\n" % {:key => row['key'], :value => row['value']}
+      if row[:value].is_a? Integer
+        "\"#{row[:key]}\",#{row[:value]}\n"
+      else
+        "\"#{row[:key]}\",\"#{row[:value]}\"\n"
+      end
     end
 
     # Temporary file location while downloading
@@ -76,11 +84,15 @@ module Contentqa
     # Create a report
     def self.create_report (id, view)
       path = report_path id, view
+      provider = find_ingest(id)['provider']
       if path 
         FileUtils.mkpath File.dirname(path) if not File.exists? File.dirname(path)
         view_name = "qa_reports/%{view}" % {:view => view}
-        options = is_group_view?(view) ? {:group => true} : {}
-        File.open(download_path(path), "w") { |f| @dpla_db.view(view_name,options) { |row| f << csvify(row) } }
+        options = {:startkey => [provider, "0"], :endkey => [provider, "Z"]}
+        if is_group_view?(view)
+            options[:group] = true
+        end
+        File.open(download_path(path), "w") { |f| @dpla_db.view(view_name, options) { |row| f << csvify(filter(row)) } }
         FileUtils.mv download_path(path), path
       end
      end

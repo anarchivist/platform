@@ -19,7 +19,7 @@ module Contentqa
     end
 
     def create
-#      Reports.delay.create_report(params[:id], params[:report_type])
+      #Reports.delay.create_report(params[:id], params[:report_type])
       Reports.create_report(params[:id], params[:report_type])
       redirect_to :controller => "reporting", :action => "provider", :id => params[:id]
     end
