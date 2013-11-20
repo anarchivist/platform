@@ -1,4 +1,4 @@
-require 'couchrest'
+require 'v1/repository'
 require 'fileutils'
 
 module Contentqa
@@ -9,8 +9,11 @@ module Contentqa
 
 #    @dpla_db = CouchRest.database("http://162.209.12.195:5984/dpla")
 #    @dashboard_db = CouchRest.database("http://162.209.12.195:5984/dashboard")
-     @dpla_db = CouchRest.database("http://camp.dpla.berkman.temphost.net:5981/dpla")
-     @dashboard_db = CouchRest.database("http://camp.dpla.berkman.temphost.net:5981/dashboard")
+     #@dpla_db = CouchRest.database("http://camp.dpla.berkman.temphost.net:5981/dpla")
+     #@dashboard_db = CouchRest.database("http://camp.dpla.berkman.temphost.net:5981/dashboard")
+     @dashboard_db = V1::Repository.database(V1::Repository.cluster_endpoint('reader', 'dashboard'))
+     @dpla_db = V1::Repository.database(V1::Repository.cluster_endpoint('reader', 'dpla'))
+     @base_path = "/tmp/camp81/reports"
 
 
     # Get the document describing an ingest from the dashboard database
@@ -41,35 +44,29 @@ module Contentqa
     end
 
     # Get a File::Stat object for the report if it has been generated
-    def self.report_exists? (id, view)
+    def self.get_report (id, view)
       path = report_path id, view
       File.stat(path) if path and File.exists? path 
     end
 
     def self.is_safe_path? (path)
-      base_path = "/tmp/camp81/reports"
-      path.match Regexp.new('^' + Regexp.escape(base_path))
+      path.match Regexp.new('^' + Regexp.escape(@base_path))
     end
     
     # Get the path on disk where report would exists. Reports are organized by ingestion document id and report name
     def self.report_path (id, view)
-      base_path = "/tmp/camp81/reports"
-      path = File.expand_path(File.join(base_path, id, view))
+      path = File.expand_path(File.join(@base_path, id, view))
       path if is_safe_path?(path) and find_report_types.include? view
     end
 
     # Remove the provider from the row key
-    def self.filter(row)
+    def self.filter (row)
        filtered_row = {:key => row['key'].last, :value => row['value']} 
     end
     
     # Convert one line of a key/value JSON response pair into a line for a CSV file
     def self.csvify (row)
-      if row[:value].is_a? Integer
-        "\"#{row[:key]}\",#{row[:value]}\n"
-      else
-        "\"#{row[:key]}\",\"#{row[:value]}\"\n"
-      end
+      "\"#{row[:key]}\",\"#{row[:value]}\"\n"
     end
 
     # Temporary file location while downloading
