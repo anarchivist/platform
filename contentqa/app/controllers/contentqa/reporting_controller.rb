@@ -18,6 +18,11 @@ module Contentqa
       end
     end
 
+    def errors
+        @ingest = params[:ingest]
+        @errors = params[:errors]
+    end
+
     def create
       Reports.create_report(params[:id], params[:report_type])
       redirect_to :controller => "reporting", :action => "provider", :id => params[:id]

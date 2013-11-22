@@ -4,6 +4,8 @@
     <th>Provider</th>
     <th>Ingest Number</th>
     <th>Last Ingest Date</th>
+    <th>Status</th>
+    <th>Errors</th>
     <th>Added</th>
     <th>Deleted</th>
     <th>Changed</th>
@@ -15,10 +17,12 @@
     <td><%= p['key'] %></td>
     <td><%= p['value'] %></td>
     <td><%= nice_time(p['doc']['ingestDate']) %></td>
+    <td><%= running?(p['doc']) ? "Running" : "Complete" %></td>
+    <td><%= error_link(p['doc']) %></td>
     <td><%= p['doc']['countAdded'] %></td>
     <td><%= p['doc']['countDeleted'] %></td>
     <td><%= p['doc']['countChanged'] %></td>
-    <td><%= link_to "Reports", {:controller => "reporting", :action => "provider", :id => p['id']} %></td>
+    <td><%= report_page_link(p['doc']) %></td>
   </tr>
   <% end %>
 </table>

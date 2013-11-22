@@ -20,5 +20,32 @@ module Contentqa
       end
     end
 
+    def error_link(ingest)
+      ingest.each do |k, v|
+        if k.end_with?("_process") and not v["error"].nil? and not v["error"].empty?
+          return link_to "Errors", {:controller => "reporting", :action => "errors", :ingest => ingest, :errors => v["error"]}
+        end
+      end
+
+      return nil
+    end
+
+    def running?(ingest)
+      ingest.each do |k, v|
+        if k.end_with?("_process") and v["status"] == "running"
+          return true
+        end
+      end
+      return false
+    end
+
+    def report_page_link(ingest)
+      if running?(ingest)
+        "Not ready"
+      else
+        link_to "Reports", {:controller => "reporting", :action => "provider", :id => ingest['_id']}
+      end
+    end
+
   end
 end

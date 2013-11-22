@@ -4,16 +4,9 @@ require 'fileutils'
 module Contentqa
 
   module Reports
-    
-    JOBS_DATABASE = 'jobs'
-
-#    @dpla_db = CouchRest.database("http://162.209.12.195:5984/dpla")
-#    @dashboard_db = CouchRest.database("http://162.209.12.195:5984/dashboard")
-     #@dpla_db = CouchRest.database("http://camp.dpla.berkman.temphost.net:5981/dpla")
-     #@dashboard_db = CouchRest.database("http://camp.dpla.berkman.temphost.net:5981/dashboard")
-     @dashboard_db = V1::Repository.database(V1::Repository.cluster_endpoint('reader', 'dashboard'))
-     @dpla_db = V1::Repository.database(V1::Repository.cluster_endpoint('reader', 'dpla'))
-     @base_path = "/tmp/camp81/reports"
+    @dashboard_db = V1::Repository.database(V1::Repository.cluster_endpoint('reader', 'dashboard'))
+    @dpla_db = V1::Repository.database(V1::Repository.cluster_endpoint('reader', 'dpla'))
+    @base_path = "/tmp/camp81/reports"
 
 
     # Get the document describing an ingest from the dashboard database
@@ -92,7 +85,7 @@ module Contentqa
         File.open(download_path(path), "w") { |f| @dpla_db.view(view_name, options) { |row| f << csvify(filter(row)) } }
         FileUtils.mv download_path(path), path
       end
-     end
+    end
     
   end
 
