@@ -20,8 +20,7 @@ module Contentqa
     end
 
     def errors
-        @ingest = Reports.find_ingest params[:id]
-        @errors = get_errors(@ingest)
+      @ingest = Reports.find_ingest params[:id]
     end
 
     def create

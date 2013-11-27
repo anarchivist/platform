@@ -27,7 +27,7 @@
   <tr>
     <th>Error</th>
   </tr>
-  <% @errors.each do |error| %>
+  <% get_errors(@ingest).each do |error| %>
   <tr>
     <td><%= error %></td>
   </tr>
