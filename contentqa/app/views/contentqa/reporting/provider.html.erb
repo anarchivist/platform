@@ -1,4 +1,3 @@
-
 <h1>Reports : <%= @ingest['provider'] %></h1>
 
 <div class="row span12">
@@ -24,15 +23,20 @@
 </div>
 </div>
 
+<div id="progressbar"></div>
+<div><button type="button" id="check_all">Check/Uncheck All</button></div>
+<%= hidden_field_tag "id", @ingest["_id"] %>
 <table class="table">
-  <tr>
-    <th>Report</th>
-    <th>Status</th>
-  </tr>
-  <% @report_types.each do |rt| %>
-  <tr>
-    <td><%= rt %></td>
-    <td><%= report_link(@reports[rt], @ingest, rt) %> <small><%= report_details(@reports[rt]) %></small></td>
-  </tr>
-  <% end %>
+<tr>
+  <th><button type="button" id="create">Create</button></th>
+  <th>Report</th>
+  <th>Status</th>
+</tr>
+<% @report_types.each do |rt| %>
+<tr>
+  <td><%= check_box_tag "reports[]", rt, false, :disabled => (@reports[rt] ? true : false) %></td>
+  <td><%= rt %></td>
+  <td><%= report_link(@reports[rt], @ingest, rt) %> <small><%= report_details(@reports[rt]) %></small></td>
+</tr>
+<% end %>
 </table>

@@ -7,6 +7,7 @@ gem 'pg', :require => 'pg'
 gem 'sqlite3'  
 gem 'devise', '2.1.2'
 gem 'jquery-rails'
+gem 'jquery-ui-rails'
 gem 'dpla_search_api_v1', :path => 'v1'
 gem 'dpla_contentqa', :path => 'contentqa'
 

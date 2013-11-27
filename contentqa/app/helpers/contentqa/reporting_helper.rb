@@ -8,9 +8,6 @@ module Contentqa
     def report_link(report_file, ingest, report_type)
       if report_file
         link_to "Download", {:controller => "reporting", :action => "download", :id => ingest['_id'], :report_type => report_type}
-      else
-        link_to "Create Report", {:controller => "reporting", :action => "create", :id => ingest['_id'], :report_type => report_type},
-                                 {:class => "create"}
       end
     end
 
@@ -21,12 +18,19 @@ module Contentqa
     end
 
     def error_link(ingest)
-      ingest.each do |k, v|
-        if k.end_with?("_process") and not v["error"].nil? and not v["error"].empty?
-          return link_to "Errors", {:controller => "reporting", :action => "errors", :ingest => ingest, :errors => v["error"]}
-        end
+      if get_errors(ingest)
+        return link_to "Errors", {:controller => "reporting", :action => "errors", :id => ingest['_id']}
       end
 
+      return nil
+    end
+
+    def get_errors(ingest)
+      ingest.each do |k, v|
+        if k.end_with?("_process") and not v["error"].nil? and not v["error"].empty?
+          return v["error"]
+        end
+      end
       return nil
     end
 

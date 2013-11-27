@@ -4,6 +4,7 @@ require "contentqa/reports"
 module Contentqa
 
   class ReportingController < ApplicationController
+    include ReportingHelper
 
     def index
       @providers = Reports.find_last_ingests
@@ -19,13 +20,13 @@ module Contentqa
     end
 
     def errors
-        @ingest = params[:ingest]
-        @errors = params[:errors]
+        @ingest = Reports.find_ingest params[:id]
+        @errors = get_errors(@ingest)
     end
 
     def create
-      Reports.create_report(params[:id], params[:report_type])
-      redirect_to :controller => "reporting", :action => "provider", :id => params[:id]
+      Reports.create_report(params[:id], params[:report])
+      render nothing: true
     end
 
     def download
