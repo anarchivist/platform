@@ -23,7 +23,6 @@
 </div>
 </div>
 
-<div id="progressbar"></div>
 <div><button type="button" id="check_all">Check/Uncheck All</button></div>
 <%= hidden_field_tag "id", @ingest["_id"] %>
 <table class="table">
@@ -32,11 +31,13 @@
   <th>Report</th>
   <th>Status</th>
 </tr>
-<% @report_types.each do |rt| %>
+<% @report_types.each do |type| %>
+<% report = @reports[type][:report] %>
+<% downloading = @reports[type][:downloading] %>
 <tr>
-  <td><%= check_box_tag "reports[]", rt, false, :disabled => (@reports[rt] ? true : false) %></td>
-  <td><%= rt %></td>
-  <td><%= report_link(@reports[rt], @ingest, rt) %> <small><%= report_details(@reports[rt]) %></small></td>
+  <td><%= check_box_tag "reports[]", type, false, :disabled => (report or downloading) %></td>
+  <td><%= type %></td>
+  <td class="<%= type %>_link"><%= report_link(report, downloading, @ingest['_id'], type) %> <small><%= report_details(report) %></small></td>
 </tr>
 <% end %>
 </table>

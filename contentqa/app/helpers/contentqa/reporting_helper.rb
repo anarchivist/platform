@@ -5,10 +5,16 @@ module Contentqa
       Time.parse(t).to_s
     end
 
-    def report_link(report_file, ingest, report_type)
+    def report_link(report_file, downloading, ingest_id, report_type)
       if report_file
-        link_to "Download", {:controller => "reporting", :action => "download", :id => ingest['_id'], :report_type => report_type}
+        link_to "Download", {:controller => "reporting", :action => "download", :id => ingest_id, :report_type => report_type}
+      elsif downloading
+        "Creating..."
       end
+    end
+
+    def disable_report_checkbox?(report_file)
+      not report_file or not report_file.instance_of?(String)
     end
 
     def report_details(report_file)

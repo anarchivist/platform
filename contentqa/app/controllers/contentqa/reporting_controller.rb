@@ -14,8 +14,9 @@ module Contentqa
       @ingest = Reports.find_ingest params[:id]
       @report_types = Reports.find_report_types
       @reports = Hash.new
-      @report_types.each do |rt|
-        @reports[rt] = Reports.get_report(@ingest['_id'], rt)
+      @report_types.each do |type|
+        @reports[type] = {:report => Reports.get_report(@ingest['_id'], type),
+                          :downloading => Delayed::Job.find_by_queue("#{params[:id]}_#{type}")}
       end
     end
 
@@ -24,7 +25,9 @@ module Contentqa
     end
 
     def create
-      Reports.create_report(params[:id], params[:report])
+      id = params[:id]
+      type = params[:report_type]
+      Reports.delay(:queue => "#{id}_#{type}").create_report(id, type)
       render nothing: true
     end
 

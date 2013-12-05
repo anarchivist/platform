@@ -54,7 +54,7 @@ module Contentqa
 
     # Remove the provider from the row key
     def self.filter (row)
-       filtered_row = {:key => row['key'].last, :value => row['value']} 
+      filtered_row = {:key => row['key'].last, :value => row['value']} 
     end
     
     # Convert one line of a key/value JSON response pair into a line for a CSV file
@@ -80,7 +80,7 @@ module Contentqa
         view_name = "qa_reports/%{view}" % {:view => view}
         options = {:startkey => [provider, "0"], :endkey => [provider, "Z"]}
         if is_group_view?(view)
-            options[:group] = true
+          options[:group] = true
         end
         File.open(download_path(path), "w") { |f| @dpla_db.view(view_name, options) { |row| f << csvify(filter(row)) } }
         FileUtils.mv download_path(path), path
