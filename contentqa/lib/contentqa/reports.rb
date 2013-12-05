@@ -6,7 +6,7 @@ module Contentqa
   module Reports
     @dashboard_db = V1::Repository.database(V1::Repository.cluster_endpoint('reader', 'dashboard'))
     @dpla_db = V1::Repository.database(V1::Repository.cluster_endpoint('reader', 'dpla'))
-    @base_path = "/tmp/qa_reports"
+    @base_path = File.expand_path("~/qa_reports")
 
 
     # Get the document describing an ingest from the dashboard database
