@@ -23,21 +23,25 @@
 </div>
 </div>
 
-<div><button type="button" id="check_all">Check/Uncheck All</button></div>
+<div style="float: left;"><button type="button" class="generate_reports">Generate Reports</button></div>
+<div style="float: right;"><button type="button" id="refresh_status">Refresh Status</button></div>
 <%= hidden_field_tag "id", @ingest["_id"] %>
 <table class="table">
 <tr>
-  <th><button type="button" id="create">Create</button></th>
+  <th><%= check_box_tag "check_all" %> Check/Uncheck All</th>
   <th>Report</th>
   <th>Status</th>
 </tr>
 <% @report_types.each do |type| %>
 <% report = @reports[type][:report] %>
-<% downloading = @reports[type][:downloading] %>
+<% generate_job = @reports[type][:generate_job] %>
 <tr>
-  <td><%= check_box_tag "reports[]", type, false, :disabled => (report or downloading) %></td>
+  <td><%= check_box_tag "reports[]", type, false, :disabled => (report or generate_job), :class => "report_checkbox" %></td>
   <td><%= type %></td>
-  <td class="<%= type %>_link"><%= report_link(report, downloading, @ingest['_id'], type) %> <small><%= report_details(report) %></small></td>
+  <td class="<%= type %>_link"><%= report_link(report, generate_job, @ingest['_id'], type) %> <small><%= report_details(report) %></small></td>
 </tr>
 <% end %>
+<tr>
+  <td colspan="3"><button type="button" class="generate_reports">Generate Reports</button></td>
+<tr>
 </table>

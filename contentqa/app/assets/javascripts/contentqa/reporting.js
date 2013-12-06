@@ -1,10 +1,13 @@
 // Place all the behaviors and hooks related to the matching controller here.
 // All this logic will automatically be available in application.js.
 $('#check_all').on("click", function() {
-    $('input[type="checkbox"]').click();
+    var checked = this.checked;
+    $('input[name="reports[]"]:enabled').map(function() {
+        $(this).prop("checked", checked);
+    })
 });
 
-$('#create').on("click", function() {
+$('.generate_reports').on("click", function() {
     var report_types = $('input[name="reports[]"]:checked').map(function() {
       return $(this).val();
     }).get();

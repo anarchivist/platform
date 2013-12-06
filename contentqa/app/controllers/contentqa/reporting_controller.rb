@@ -16,7 +16,7 @@ module Contentqa
       @reports = Hash.new
       @report_types.each do |type|
         @reports[type] = {:report => Reports.get_report(@ingest['_id'], type),
-                          :downloading => Delayed::Job.find_by_queue("#{params[:id]}_#{type}")}
+                          :generate_job => Delayed::Job.find_by_queue("#{params[:id]}_#{type}")}
       end
     end
 
