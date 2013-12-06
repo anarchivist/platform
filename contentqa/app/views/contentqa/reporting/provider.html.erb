@@ -44,4 +44,7 @@
     <td class='<%= "#{type}" %>_status'><%= render "report_status", :report => @reports[type], :ingest_id => @ingest['_id'], :type => type %>
   </tr>
   <% end %>
+  <tr>
+    <td colspan="3"><button type="button" class="generate_reports">Generate Reports</button></td>
+  </tr>
 </table>
