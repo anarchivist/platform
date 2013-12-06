@@ -1,0 +1,3 @@
+<% @reports.keys.each do |type| %>
+  $('.<%= type %>_status').html("<%= j(render "report_status", :report => @reports[type], :ingest_id => @ingest['_id'], :type => type) %>");
+<% end %>

@@ -24,24 +24,24 @@
 </div>
 
 <div style="float: left;"><button type="button" class="generate_reports">Generate Reports</button></div>
-<div style="float: right;"><button type="button" id="refresh_status">Refresh Status</button></div>
+<div style="float: right;"><%= link_to "Refresh Status", {:controller => "reporting", :action => "provider", :id => @ingest['_id'], :remote => true} %></div>
+<div style="clear: both;"></div>
 <%= hidden_field_tag "id", @ingest["_id"] %>
+
 <table class="table">
-<tr>
+  <colgroup>
+   <col span="1" style="width: 33%;">
+   <col span="1" style="width: 33%;">
+   <col span="1" style="width: 34%;">
+  </colgroup>
   <th><%= check_box_tag "check_all" %> Check/Uncheck All</th>
   <th>Report</th>
   <th>Status</th>
-</tr>
-<% @report_types.each do |type| %>
-<% report = @reports[type][:report] %>
-<% generate_job = @reports[type][:generate_job] %>
-<tr>
-  <td><%= check_box_tag "reports[]", type, false, :disabled => (report or generate_job), :class => "report_checkbox" %></td>
-  <td><%= type %></td>
-  <td class="<%= type %>_link"><%= report_link(report, generate_job, @ingest['_id'], type) %> <small><%= report_details(report) %></small></td>
-</tr>
-<% end %>
-<tr>
-  <td colspan="3"><button type="button" class="generate_reports">Generate Reports</button></td>
-<tr>
+  <% @reports.keys.each do |type| %>
+  <tr>
+    <td><%= check_box_tag "reports[]", type, false, :disabled => (@reports[type][:file] or @reports[type][:job]), :class => "report_checkbox" %></td>
+    <td><%= type %></td>
+    <td class='<%= "#{type}" %>_status'><%= render "report_status", :report => @reports[type], :ingest_id => @ingest['_id'], :type => type %>
+  </tr>
+  <% end %>
 </table>

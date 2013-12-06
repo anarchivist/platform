@@ -12,11 +12,10 @@ module Contentqa
 
     def provider
       @ingest = Reports.find_ingest params[:id]
-      @report_types = Reports.find_report_types
       @reports = Hash.new
-      @report_types.each do |type|
-        @reports[type] = {:report => Reports.get_report(@ingest['_id'], type),
-                          :generate_job => Delayed::Job.find_by_queue("#{params[:id]}_#{type}")}
+      Reports.find_report_types.each do |type|
+        @reports[type] = {:file => Reports.get_report(@ingest['_id'], type),
+                          :job => Delayed::Job.find_by_queue("#{params[:id]}_#{type}")}
       end
     end
 

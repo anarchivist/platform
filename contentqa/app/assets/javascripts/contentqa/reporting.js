@@ -23,7 +23,7 @@ $('.generate_reports').on("click", function() {
                 data: {id: ingest_id, report_type: report_type},
                 success: function() {
                     count++;
-                    $("." + report_type + "_link").html("Creating...");
+                    $("." + report_type + "_link").html("Generating.");
                     if (count == total) {
                         window.location.replace("/qa/reporting/provider?id=" + ingest_id);
                     }
