@@ -32,3 +32,13 @@ $('.generate_reports').on("click", function() {
         });
     }
 });
+
+if ($('.running').length) {
+    setInterval(function() {
+        var ingest_id = $('#id').val();
+        $.ajax({
+            url: "/qa/reporting/provider",
+            data: {id: ingest_id}
+        });
+    }, 5000);
+}

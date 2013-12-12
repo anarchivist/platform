@@ -28,7 +28,7 @@ module Contentqa
     end
 
     def error_link(ingest)
-      if get_errors(ingest)
+      if not get_errors(ingest).empty?
         return link_to "Errors", {:controller => "reporting", :action => "errors", :id => ingest['_id']}
       end
 
@@ -36,12 +36,13 @@ module Contentqa
     end
 
     def get_errors(ingest)
+      errors = Hash.new
       ingest.each do |k, v|
         if k.end_with?("_process") and not v["error"].nil? and not v["error"].empty?
-          return v["error"]
+          errors[k] = v["error"]
         end
       end
-      return nil
+      return errors
     end
 
     def running?(ingest)

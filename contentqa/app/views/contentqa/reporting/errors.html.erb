@@ -23,13 +23,20 @@
 </div>
 </div>
 
-<table class="table">
+<% process_errors = get_errors(@ingest) %>
+<% process_errors.keys.each do |process| %>
+  <a id="<%= process %>"><%= process %></a> |
+<% end %>
+
+<% process_errors.each do |process, errors| %>
+<table id="<%= process %>_table" class="table" style="display: none;">
   <tr>
-    <th>Error</th>
+    <th><%= process %></th>
   </tr>
-  <% get_errors(@ingest).each do |error| %>
+  <% errors.each do |error| %>
   <tr>
     <td><%= error %></td>
   </tr>
   <% end %>
 </table>
+<% end %>

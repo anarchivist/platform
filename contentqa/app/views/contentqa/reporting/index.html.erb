@@ -5,6 +5,14 @@
     <th>Ingest Number</th>
     <th>Last Ingest Start Date</th>
     <th>Status</th>
+    <th>Fetched Items</th>
+    <th>Fetched Colls</th>
+    <th>Enriched Items</th>
+    <th>Enriched Colls</th>
+    <th>Missing ID</th>
+    <th>Missing sourceResource</th>
+    <th>Saved Items</th>
+    <th>Saved Colls</th>
     <th>Errors</th>
     <th>Added</th>
     <th>Deleted</th>
@@ -13,11 +21,20 @@
   </tr>
 
   <% @providers.each do |p| %>
+  <% enrich_process = (p['doc']['enrich_process'] && p['doc']['enrich_process']) ? 'enrich_process' : 'poll_storage_process' %>
   <tr>
     <td><%= p['key'] %></td>
     <td><%= p['value'] %></td>
     <td><%= nice_time(p['doc']['ingestDate']) %></td>
     <td><%= running?(p['doc']) ? "Running" : "Complete" %></td>
+    <td><%= p['doc'].fetch('fetch_process', {})['total_items'] ||= '--' %></td>
+    <td><%= p['doc'].fetch('fetch_process', {})['total_collections'] ||= '--' %></td>
+    <td><%= p['doc'].fetch(enrich_process, {})['total_items'] ||= '--' %></td>
+    <td><%= p['doc'].fetch(enrich_process, {})['total_collections'] ||= '--' %></td>
+    <td><%= p['doc'].fetch(enrich_process, {})['missing_id'] ||= '--' %></td>
+    <td><%= p['doc'].fetch(enrich_process, {})['missing_source_resource'] ||= '--' %></td>
+    <td><%= p['doc'].fetch('save_process', {})['total_items'] ||= '--' %></td>
+    <td><%= p['doc'].fetch('save_process', {})['total_collections'] ||= '--' %></td>
     <td><%= error_link(p['doc']) %></td>
     <td><%= p['doc']['countAdded'] %></td>
     <td><%= p['doc']['countDeleted'] %></td>
@@ -26,4 +43,3 @@
   </tr>
   <% end %>
 </table>
-

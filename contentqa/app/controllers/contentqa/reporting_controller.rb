@@ -17,6 +17,11 @@ module Contentqa
         @reports[type] = {:file => Reports.get_report(@ingest['_id'], type),
                           :job => Delayed::Job.find_by_queue("#{params[:id]}_#{type}")}
       end
+
+      respond_to do |format|
+        format.html
+        format.js {render "report_status", :reports => @reports, :ingest => @ingest}
+      end
     end
 
     def errors
