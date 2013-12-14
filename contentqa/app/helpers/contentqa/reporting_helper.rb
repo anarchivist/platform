@@ -6,14 +6,14 @@ module Contentqa
     end
 
     def job_start(job)
-      job.created_at.in_time_zone("Eastern Time (US & Canada)").strftime("%a %H:%M:%S %Z")
+      job.created_at.in_time_zone("Eastern Time (US & Canada)").strftime("%Y-%m-%d %H:%M:%S %z")
     end
 
     def report_link(report_file, generate_job, ingest_id, report_type)
       if report_file
         link_to "Download", {:controller => "reporting", :action => "download", :id => ingest_id, :report_type => report_type}
       elsif generate_job
-        "Generating. Started on #{job_start(generate_job)}"
+        "Generating."
       end
     end
 
@@ -21,10 +21,12 @@ module Contentqa
       not report_file or not report_file.instance_of?(String)
     end
 
-    def report_details(report_file)
+    def report_details(report_file, generate_job)
       if report_file        
         number_to_human_size(report_file.size) + " - " + report_file.mtime.to_s if report_file 
-      end
+      elsif generate_job
+        "Started on #{job_start(generate_job)}"
+     end
     end
 
     def error_link(ingest)

@@ -19,8 +19,8 @@ module Contentqa
       end
 
       respond_to do |format|
+        format.js
         format.html
-        format.js {render "report_status", :reports => @reports, :ingest => @ingest}
       end
     end
 
@@ -39,6 +39,7 @@ module Contentqa
       path = Reports.report_path params[:id], params[:report_type]
       if path
         send_file path, :type => "text/csv", :filename => params[:report_type]
+        return
       else
         render status: :forbidden, text: "Access denied"
       end

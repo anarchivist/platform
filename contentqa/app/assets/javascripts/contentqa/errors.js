@@ -1,6 +1,6 @@
-$(".table:first").show();
+$(".error_table:first").show();
 
-$("a").bind("click", function() {
+$(".error_link").bind("click", function() {
     $(".table").hide();
     $("#" + $(this).attr("id") + "_table").show();
 });

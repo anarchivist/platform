@@ -1,35 +1,12 @@
-<h1>Errors : <%= @ingest['provider'] %></h1>
-
-<div class="row span12">
-<div class="span6">
-<dl class="dl-horizontal">
-  <dt>Provider</dt>
-  <dd><%= @ingest['provider'] %></dd>
-  <dt>Ingest Sequence</dt>
-  <dd><%= @ingest['ingestionSequence'] %></dd>
-  <dt>Ingest Start Date</dt>
-  <dd><%= nice_time(@ingest['ingestDate']) %></dd>
-</dl>
-</div>
-<div class="span6">
-<dl class="dl-horizontal">
-  <dt>Added</dt>
-  <dd><%= @ingest['countAdded'] %></dd>
-  <dt>Deleted</dt>
-  <dd><%= @ingest['countDeleted'] %></dd>
-  <dt>Changed</dt>
-  <dd><%= @ingest['countChanged'] %></dd>
-</dl>
-</div>
-</div>
+<%= render "ingest_stats", :ingest => @ingest %>
 
 <% process_errors = get_errors(@ingest) %>
 <% process_errors.keys.each do |process| %>
-  <a id="<%= process %>"><%= process %></a> |
+  <a id="<%= process %>" class="error_link"><%= process %></a> |
 <% end %>
 
 <% process_errors.each do |process, errors| %>
-<table id="<%= process %>_table" class="table" style="display: none;">
+<table id="<%= process %>_table" class="table error_table" style="display: none;">
   <tr>
     <th><%= process %></th>
   </tr>

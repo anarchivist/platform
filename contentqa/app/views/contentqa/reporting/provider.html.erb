@@ -1,44 +1,18 @@
-<h1>Reports : <%= @ingest['provider'] %></h1>
-
-<div class="row span12">
-<div class="span6">
-<dl class="dl-horizontal">
-  <dt>Provider</dt>
-  <dd><%= @ingest['provider'] %></dd>
-  <dt>Ingest Sequence</dt>
-  <dd><%= @ingest['ingestionSequence'] %></dd>
-  <dt>Ingest Start Date</dt>
-  <dd><%= nice_time(@ingest['ingestDate']) %></dd>
-</dl>
-</div>
-<div class="span6">
-<dl class="dl-horizontal">
-  <dt>Added</dt>
-  <dd><%= @ingest['countAdded'] %></dd>
-  <dt>Deleted</dt>
-  <dd><%= @ingest['countDeleted'] %></dd>
-  <dt>Changed</dt>
-  <dd><%= @ingest['countChanged'] %></dd>
-</dl>
-</div>
-</div>
+<%= render "ingest_stats", :ingest => @ingest %>
 
 <button type="button" class="generate_reports">Generate Reports</button>
 <%= hidden_field_tag "id", @ingest["_id"] %>
 
 <table class="table">
   <colgroup>
-   <col span="1" style="width: 33%;">
-   <col span="1" style="width: 33%;">
-   <col span="1" style="width: 34%;">
+   <col span="1" style="width: 50%;">
+   <col span="1" style="width: 50%;">
   </colgroup>
-  <th><%= check_box_tag "check_all" %> Check/Uncheck All</th>
-  <th>Report</th>
+  <th><%= check_box_tag "check_all" %> Report</th>
   <th>Status</th>
   <% @reports.keys.each do |type| %>
   <tr>
-    <td><%= check_box_tag "reports[]", type, false, :disabled => (@reports[type][:file] or @reports[type][:job]), :class => "report_checkbox" %></td>
-    <td><%= type %></td>
+    <td><%= check_box_tag "reports[]", type, false, :disabled => (@reports[type][:file] or @reports[type][:job]), :class => "report_checkbox" %>&nbsp<%= type %></td>
     <td class='<%= "#{type}" %>_status'><%= render "report_status", :report => @reports[type], :ingest_id => @ingest['_id'], :type => type %>
   </tr>
   <% end %>
