@@ -1,12 +1,17 @@
 module Contentqa
   module ReportingHelper
 
-    def nice_time(t)
-      Time.parse(t).to_s
+    def nice_process(process)
+      process.tr("_", " ").capitalize
+    end
+
+    def nice_est_time(t)
+      t = Time.parse(t) if t.instance_of?(String)
+      t.in_time_zone("Eastern Time (US & Canada)").strftime("%Y-%m-%d %H:%M:%S")
     end
 
     def job_start(job)
-      job.created_at.in_time_zone("Eastern Time (US & Canada)").strftime("%Y-%m-%d %H:%M:%S %z")
+      nice_est_time(job.created_at)
     end
 
     def report_link(report_file, generate_job, ingest_id, report_type)
@@ -62,6 +67,10 @@ module Contentqa
       else
         link_to "Reports", {:controller => "reporting", :action => "provider", :id => ingest['_id']}
       end
+    end
+
+    def get_enrich_process(ingest)
+      enrich_process = ingest.to_hash.fetch('poll_storage_process', {})['status'].nil? ? 'enrich_process' : 'poll_storage_process'
     end
 
   end

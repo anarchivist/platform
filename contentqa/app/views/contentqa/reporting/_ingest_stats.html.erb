@@ -2,7 +2,7 @@
 <table class="table">
   <tr>
     <th>Ingest Sequence</th>
-    <th>Ingest Start Time</th>
+    <th>Ingest Start Time (EST)</th>
     <th>Added</th>
     <th>Deleted</th>
     <th>Changed</th>
@@ -17,17 +17,17 @@
   </tr>
   <tr>
     <td><%= ingest['ingestionSequence'] %></td>
-    <td><%= nice_time(ingest['ingestDate']) %></td>
+    <td><%= nice_est_time(ingest['ingestDate']) %></td>
     <td><%= ingest['countAdded'] %></td>
     <td><%= ingest['countDeleted'] %></td>
     <td><%= ingest['countChanged'] %></td>
-    <td><%= ingest.to_hash.fetch('fetch_process', {})['total_items'] %></td>
-    <td><%= ingest.to_hash.fetch('enrich_process', {})['total_items'] %></td>
-    <td><%= ingest.to_hash.fetch('save_process', {})['total_items'] %></td>
-    <td><%= ingest.to_hash.fetch('enrich_process', {})['missing_id'] %></td>
-    <td><%= ingest.to_hash.fetch('enrich_process', {})['missing_source_resource'] %></td>
-    <td><%= ingest.to_hash.fetch('process', {})['total_collections'] %></td>
-    <td><%= ingest.to_hash.fetch('enrich_process', {})['total_collections'] %></td>
-    <td><%= ingest.to_hash.fetch('save_process', {})['total_collections'] %></td>
+    <td><%= ingest.to_hash.fetch('fetch_process', {})['total_items'] ||= '--' %></td>
+    <td><%= ingest.to_hash.fetch(get_enrich_process(ingest), {})['total_items'] ||= '--' %></td>
+    <td><%= ingest.to_hash.fetch('save_process', {})['total_items'] ||= '--' %></td>
+    <td><%= ingest.to_hash.fetch(get_enrich_process(ingest), {})['missing_id'] ||= '--' %></td>
+    <td><%= ingest.to_hash.fetch(get_enrich_process(ingest), {})['missing_source_resource'] ||= '--' %></td>
+    <td><%= ingest.to_hash.fetch('fetch_process', {})['total_collections'] ||= '--' %></td>
+    <td><%= ingest.to_hash.fetch(get_enrich_process(ingest), {})['total_collections'] ||= '--' %></td>
+    <td><%= ingest.to_hash.fetch('save_process', {})['total_collections'] ||= '--' %></td>
   </tr>
 </table>

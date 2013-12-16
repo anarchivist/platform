@@ -24,5 +24,6 @@ Gem::Specification.new do |s|
   s.add_dependency "couchrest", '1.1.3'
   s.add_dependency "delayed_job", "~> 3.0.4"
   s.add_dependency "delayed_job_active_record", "~> 0.3.0"
+  s.add_dependency "jquery-tablesorter"
 
 end

@@ -12,6 +12,8 @@ gem 'dpla_search_api_v1', :path => 'v1'
 gem 'dpla_contentqa', :path => 'contentqa'
 gem 'delayed_job'
 gem 'delayed_job_active_record'
+gem 'daemons'
+gem 'jquery-tablesorter'
 
 group :assets do
   gem 'sass-rails',   '~> 3.2.3'
