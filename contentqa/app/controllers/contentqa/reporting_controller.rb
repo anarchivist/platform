@@ -42,9 +42,9 @@ module Contentqa
 
     def download
       if params[:report_type] == "all"
-        @ingest = Reports.find_ingest params[:id]
-        path = Reports.get_zipped_reports params[:id], @ingest['provider']
+        path = Reports.all_reports_path params[:id]
         type = "application/zip"
+        @ingest = Reports.find_ingest params[:id]
         filename = "#{@ingest['provider']}.zip"
       else
         path = Reports.report_path params[:id], params[:report_type]

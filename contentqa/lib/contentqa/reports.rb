@@ -58,6 +58,13 @@ module Contentqa
       path if is_safe_path?(path) and find_report_types.include? view
     end
 
+    # Get the path to the zip containing all reports
+    def self.all_reports_path (id)
+      provider = find_ingest(id)['provider']
+      path = File.expand_path(File.join(@base_path, id, "#{provider}.zip"))
+      path if is_safe_path?(path)
+    end
+
     # Remove the provider from the row key
     def self.filter (row)
       filtered_row = {:key => row['key'].last, :value => row['value']} 
