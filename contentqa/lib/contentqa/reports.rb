@@ -9,6 +9,12 @@ module Contentqa
     @base_path = File.expand_path("~/qa_reports")
 
 
+    def self.all_created?(id)
+      path = File.expand_path(File.join(@base_path, id))
+      count = Dir[File.join(path, '**', '*')].count { |file| File.file?(file) and not file.ends_with?(".zip") }
+      count == 52
+    end
+
     # Get the document describing an ingest from the dashboard database
     def self.find_ingest(id)
       @dashboard_db.get(id)
@@ -85,6 +91,25 @@ module Contentqa
         File.open(download_path(path), "w") { |f| @dpla_db.view(view_name, options) { |row| f << csvify(filter(row)) } }
         FileUtils.mv download_path(path), path
       end
+    end
+
+    # Compress all files in a path
+    def self.compress (path, archive)
+      FileUtils.chdir(path)
+      `zip #{archive} *`
+    end
+
+    # Get zipped reports
+    def self.get_zipped_reports (id, provider)
+      path = File.expand_path(File.join(@base_path, id))
+      archive =  "#{provider}.zip"
+      archive_path = File.expand_path(File.join(path, archive))
+      
+      if not File.exists?(archive_path) or not File.stat(archive_path)
+        compress(path, archive)
+      end
+
+      return File.stat(archive_path)
     end
     
   end

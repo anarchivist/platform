@@ -15,8 +15,13 @@ module Contentqa
     end
 
     def report_link(report_file, generate_job, ingest_id, report_type)
+      if report_type == "all"
+        text = "Download All"
+      else
+        text = "Download"
+      end
       if report_file
-        link_to "Download", {:controller => "reporting", :action => "download", :id => ingest_id, :report_type => report_type}
+        link_to text, {:controller => "reporting", :action => "download", :id => ingest_id, :report_type => report_type}
       elsif generate_job
         "Generating."
       end

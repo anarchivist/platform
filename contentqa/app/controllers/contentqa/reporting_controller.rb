@@ -17,6 +17,11 @@ module Contentqa
         @reports[type] = {:file => Reports.get_report(@ingest['_id'], type),
                           :job => Delayed::Job.find_by_queue("#{params[:id]}_#{type}")}
       end
+      if Reports.all_created?(params[:id])
+        @all_reports = Reports.get_zipped_reports(@ingest['_id'], @ingest['provider'])
+      else
+        @all_reports = false
+      end
 
       respond_to do |format|
         format.js
@@ -36,14 +41,24 @@ module Contentqa
     end
 
     def download
-      path = Reports.report_path params[:id], params[:report_type]
+      if params[:report_type] == "all"
+        @ingest = Reports.find_ingest params[:id]
+        path = Reports.get_zipped_reports params[:id], @ingest['provider']
+        type = "application/zip"
+        filename = "#{@ingest['provider']}.zip"
+      else
+        path = Reports.report_path params[:id], params[:report_type]
+        type = "text/csv"
+        filename = params[:report_type]
+      end
+
       if path
-        send_file path, :type => "text/csv", :filename => params[:report_type]
+        send_file path, :type => type, :filename => filename
         return
       else
         render status: :forbidden, text: "Access denied"
       end
     end
-      
+
   end
 end
