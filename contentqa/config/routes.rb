@@ -11,4 +11,5 @@ Contentqa::Engine.routes.draw do
   get "/reporting/create" => "reporting#create"
   get "/reporting/download" => "reporting#download"
   get "/reporting/errors" => "reporting#errors"
+  get "/reporting/global" => "reporting#global"
 end

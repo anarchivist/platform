@@ -12,7 +12,11 @@ module Contentqa
     def self.all_created?(id)
       path = File.expand_path(File.join(@base_path, id))
       count = Dir[File.join(path, '**', '*')].count { |file| File.file?(file) and not file.ends_with?(".zip") }
-      count == 52
+      if id =~ /global/
+        count == 26
+      else
+        count == 52
+      end
     end
 
     # Get the document describing an ingest from the dashboard database
@@ -21,8 +25,14 @@ module Contentqa
     end
 
     # Get the list of available reports (defined as the qa_reports views in the dpla database)
-    def self.find_report_types
-      @dpla_db.get('_design/qa_reports')['views'].keys.sort
+    def self.find_report_types(type=nil)
+      if type == "provider"
+        @dpla_db.get('_design/qa_reports')['views'].keys.map{|k| k unless k =~/global/}.compact.sort
+      elsif type == "global"
+        @dpla_db.get('_design/qa_reports')['views'].keys.map{|k| k if k =~ /global/}.compact.sort
+      else
+        @dpla_db.get('_design/qa_reports')['views'].keys.sort
+      end
     end
 
     # Get the list of providers for whom data has been ingested
@@ -40,6 +50,11 @@ module Contentqa
         last = a['key']
       end
       output
+    end
+
+    # Get the sum of the all ingestion sequences
+    def self.get_global_reports_id
+      "global_#{find_last_ingests.map{|k| k["doc"]["ingestionSequence"]}.sum.to_s}"
     end
 
     # Get a File::Stat object for the report if it has been generated
@@ -60,7 +75,11 @@ module Contentqa
 
     # Get the path to the zip containing all reports
     def self.all_reports_path (id)
-      provider = find_ingest(id)['provider']
+      if id =~ /global/
+        provider = "global"
+      else
+        provider = find_ingest(id)['provider']
+      end
       path = File.expand_path(File.join(@base_path, id, "#{provider}.zip"))
       path if is_safe_path?(path)
     end
@@ -81,17 +100,21 @@ module Contentqa
     end
 
     def self.is_group_view? (view_name)
-      view_name.end_with? "_count"
+      view_name =~ /_count/
     end
 
     # Create a report
     def self.create_report (id, view)
       path = report_path id, view
-      provider = find_ingest(id)['provider']
       if path 
         FileUtils.mkpath File.dirname(path) if not File.exists? File.dirname(path)
         view_name = "qa_reports/%{view}" % {:view => view}
-        options = {:startkey => [provider, "0"], :endkey => [provider, "Z"]}
+        if view =~ /global/
+          options = {}
+        else
+          provider = find_ingest(id)['provider']
+          options = {:startkey => [provider, "0"], :endkey => [provider, "Z"]}
+        end
         if is_group_view?(view)
           options[:group] = true
         end
@@ -117,6 +140,10 @@ module Contentqa
       end
 
       return File.stat(archive_path)
+    end
+
+    def self.ingestion_running?
+      @dashboard_db.view("all_ingestion_docs/for_active_ingestions")["total_rows"] > 0
     end
     
   end

@@ -74,6 +74,10 @@ module Contentqa
       end
     end
 
+    def global_reports_link
+      link_to_if !Reports.ingestion_running?, "Global Reports", {:controller => "reporting", :action => "global", :id => Reports.get_global_reports_id}
+    end
+
     def get_enrich_process(ingest)
       enrich_process = ingest.to_hash.fetch('poll_storage_process', {})['status'].nil? ? 'enrich_process' : 'poll_storage_process'
     end

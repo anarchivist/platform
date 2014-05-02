@@ -3,9 +3,9 @@
 <div>
 <div style="width: 50%; float:left;"><button type="button" class="generate_reports">Generate Reports</button></div>
 <% if @all_reports %>
-    <div class="all_reports" style="width: 50%; float: right;"><%= report_link(@all_reports, false, @ingest['_id'], 'all') %><small> <%= report_details(@all_reports, false) %></small></div>
+  <div class="all_reports" style="width: 50%; float: right;"><%= report_link(@all_reports, false, @ingest['_id'], 'all') %><small> <%= report_details(@all_reports, false) %></small></div>
 <% else %>
-    <div class="all_reports" style="width: 50%; float: right; display: none"><%= report_link(@all_reports, false, @ingest['_id'], 'all') %><small>< %= report_details(@all_reports, false) %><</small></div>
+  <div class="all_reports" style="width: 50%; float: right; display: none"><%= report_link(@all_reports, false, @ingest['_id'], 'all') %><small><%= report_details(@all_reports, false) %></small></div>
 <% end %>
 </div>
 
@@ -28,9 +28,9 @@
   <tr>
     <td><button type="button" class="generate_reports">Generate Reports</button></td>
     <% if @all_reports %>
-        <td class="all_reports"><%= report_link(@all_reports, false, @ingest['_id'], 'all') %><small> <%= report_details(@all_reports, false) %></small></td>
+      <td class="all_reports"><%= report_link(@all_reports, false, @ingest['_id'], 'all') %><small> <%= report_details(@all_reports, false) %></small></td>
     <% else %>
-        <td class="all_reports" style="display: none"><%= report_link(@all_reports, false, @ingest['_id'], 'all') %><small> <%= report_details(@all_reports, false) %></small></td>
+      <td class="all_reports" style="display: none"><%= report_link(@all_reports, false, @ingest['_id'], 'all') %><small> <%= report_details(@all_reports, false) %></small></td>
     <% end %>
   </tr>
 </table>
