@@ -84,9 +84,13 @@ module Contentqa
       path if is_safe_path?(path)
     end
 
-    # Remove the provider from the row key
+    # Remove the provider from the row key if it's a compound key
     def self.filter (row)
-      filtered_row = {:key => row['key'].last, :value => row['value']} 
+      if row['key'].kind_of?(Array)
+        filtered_row = {:key => row['key'].last, :value => row['value']}
+      else
+        filtered_row = {:key => row['key'], :value => row['value']}
+      end
     end
     
     # Convert one line of a key/value JSON response pair into a line for a CSV file
