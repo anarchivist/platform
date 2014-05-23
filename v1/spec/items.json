@@ -22,7 +22,7 @@
         "id": "2",
         "ingestType": "item",
         "sourceResource": {
-            "id": "partnerhubid1",
+            "identifier": "partnerhubid1",
             "title": "title two",
             "description": "perplexed two",
             "creator": "foo-bar-baz",
@@ -72,6 +72,10 @@
             "collection": {
                 "@id": "http://dp.la/api/collections/coll-P",
                 "name": "Civil War-Era Letters of the Neves Family of Greenville County" 
+            },
+            "date": {
+                "begin": null,
+                "end": null
             }
         },
         "provider": {
@@ -91,6 +95,10 @@
             "collection": {
                 "@id": "http://dp.la/api/collections/coll-P",
                 "name": "Civil War-Era Letters of the Neves Family of Greenville County" 
+            },
+            "date": {
+                "begin": null,
+                "end": null
             }
         },
         "provider": {
@@ -110,6 +118,10 @@
             "collection": {
                 "@id": "http://dp.la/api/collections/coll-P",
                 "name": "Civil War-Era Letters of the Neves Family of Greenville County" 
+            },
+            "date": {
+                "begin": null,
+                "end": null
             }
         },
         "provider": {
@@ -133,7 +145,11 @@
                     "city": "Some City",
                     "state": "WY"
                 }
-            ]
+            ],
+            "date": {
+                "begin": null,
+                "end": null
+            }
         }
     },
     {
@@ -150,7 +166,11 @@
                 {
                     "city": "Salt Lake City"
                 }
-            ]
+            ],
+            "date": {
+                "begin": null,
+                "end": null
+            }
         }
     },
     {
@@ -162,6 +182,10 @@
             "description": "bookend temporal ranges",
             "spatial": {
                 "city": "Salt Lake City"
+            },
+            "date": {
+                "begin": null,
+                "end": null
             }
         }
     },
@@ -182,7 +206,11 @@
             },
             "relation": "",
             "source": "",
-            "contributor": ""
+            "contributor": "",
+            "date": {
+                "begin": null,
+                "end": null
+            }
         }
     },
     {
@@ -202,7 +230,11 @@
             },
             "relation": "",
             "source": "",
-            "contributor": ""
+            "contributor": "",
+            "date": {
+                "begin": null,
+                "end": null
+            }
         }
     },
     {
@@ -222,7 +254,11 @@
             },
             "relation": "",
             "source": "",
-            "contributor": ""
+            "contributor": "",
+            "date": {
+                "begin": null,
+                "end": null
+            }
         }
     },
     {
@@ -248,7 +284,11 @@
             ],
             "relation": "",
             "source": "",
-            "contributor": ""
+            "contributor": "",
+            "date": {
+                "begin": null,
+                "end": null
+            }
         }
     },
     {
@@ -301,7 +341,11 @@
             ],
             "relation": "",
             "source": "",
-            "contributor": ""
+            "contributor": "",
+            "date": {
+                "begin": null,
+                "end": null
+            }
         }
     },
     {
@@ -315,6 +359,10 @@
                 "coordinates": "40.73,-73.98", 
                 "state": "New York",
                 "city": "New York City"
+            },
+            "date": {
+                "begin": null,
+                "end": null
             }
         }
     },
@@ -328,6 +376,10 @@
             "temporal": {
                 "begin": "1988-03-01",
                 "end": "1988-03-01"
+            },
+            "date": {
+                "begin": null,
+                "end": null
             }
         },
         "provider": {
@@ -345,6 +397,10 @@
             "temporal": {
                 "begin": "1988-03-01",
                 "end": "1988-03-01"
+            },
+            "date": {
+                "begin": null,
+                "end": null
             }
         },
         "provider": {
@@ -362,6 +418,10 @@
                 "coordinates": "43,-71",
                 "state": "NH",
                 "city": "Exeter"
+            },
+            "date": {
+                "begin": null,
+                "end": null
             }
         }
     },
@@ -375,6 +435,10 @@
                 "coordinates": "45,-71",
                 "state": "ME",
                 "city": "Errol"
+            },
+            "date": {
+                "begin": null,
+                "end": null
             }
         }
     },
@@ -383,7 +447,11 @@
         "id": "one.two.three",
         "ingestType": "item",
         "sourceResource": {
-            "title": "dotted id test"
+            "title": "dotted id test",
+            "date": {
+                "begin": null,
+                "end": null
+            }
         },
         "object": "http://www.google.com/images/srpr/logo4w.png"
     },
@@ -494,6 +562,21 @@
                 {
                     "name": "subname3"
                 }
+            ],
+            "date": {
+                "begin": null,
+                "end": null
+            }
+        }
+    },
+    {
+        "_id": "MSN1",
+        "id": "MSN1",
+        "ingestType": "item",
+        "sourceResource": {
+            "subject": [
+                { "name": "Toast" },
+                { "name": "Bread Truck Fires" }
             ]
         }
     },
@@ -506,7 +589,11 @@
             "subject": [
                 { "name": "Mountain West" },
                 { "name": "cookie" }
-            ]
+            ],
+            "date": {
+                "begin": null,
+                "end": null
+            }
         }
     },
     {
@@ -517,7 +604,11 @@
             "title": "filter facet test",
             "subject": [
                 { "name": "Mountain West" }
-            ]
+            ],
+            "date": {
+                "begin": null,
+                "end": null
+            }
         }
     },
     {
@@ -528,7 +619,11 @@
             "title": "filter facet test",
             "subject": [
                 { "name": "Splash Mountain" }
-            ]
+            ],
+            "date": {
+                "begin": null,
+                "end": null
+            }
         }
     },
     {
@@ -540,7 +635,11 @@
             "subject": [
                 { "name": "Old Man Winter" },
                 { "name": "blueberry" }
-            ]
+            ],
+            "date": {
+                "begin": null,
+                "end": null
+            }
         }
     },
     {
@@ -552,7 +651,11 @@
             "subject": [
                 { "name": "Old Man Winter" },
                 { "name": "cranberry" }
-            ]
+            ],
+            "date": {
+                "begin": null,
+                "end": null
+            }
         }
     },
     {
@@ -560,7 +663,11 @@
         "id": "mc1",
         "ingestType": "item",
         "sourceResource": {
-            "title": "metachar test (lol)"
+            "title": "metachar test (lol)",
+            "date": {
+                "begin": null,
+                "end": null
+            }
         }
     },
     {
@@ -570,6 +677,7 @@
         "sourceResource": {
             "title": "date range test",
             "date": {
+                "begin": null,
                 "end": "1973-04-04"
             }
         }
@@ -581,6 +689,7 @@
         "sourceResource": {
             "title": "date range test",
             "date": {
+                "begin": null,
                 "end": "1973-10-10"
             }
         }
@@ -592,6 +701,7 @@
         "sourceResource": {
             "title": "date range test",
             "date": {
+                "begin": null,
                 "end": "1973-12-12"
             }
         }
@@ -603,6 +713,7 @@
         "sourceResource": {
             "title": "date ranj test",
             "date": {
+                "begin": null,
                 "end": "1973"
             }
         }
@@ -615,7 +726,11 @@
             "title": "title",
             "description": "reddit",
             "extent": "ferrari",
-            "creator": "audi"
+            "creator": "audi",
+            "date": {
+                "begin": null,
+                "end": null
+            }
         }
     },
     {
@@ -625,7 +740,11 @@
         "sourceResource": {
             "title": "reddit",
             "description": "desc",
-            "date": {"displayDate": "ferrari"},
+            "date": {
+                "displayDate": "ferrari",
+                "begin": null,
+                "end": null
+            },
             "publisher": "pomegranate seeds",
             "spatial": { "region": "isengard" }
         },
@@ -639,7 +758,11 @@
             "title": "pomegranate seeds",
             "description": "audi",
             "subject": { "name": "reddit" },
-            "spatial": { "name": "isengard" }
+            "spatial": { "name": "isengard" },
+            "date": {
+                "begin": null,
+                "end": null
+            }
         }
     },
     {
@@ -647,7 +770,15 @@
         "id": "m1",
         "ingestType": "item",
         "sourceResource": {
-            "collection": {"@id": "nalgene versus nalgene", "id": "spoon", "description": "test data desc"}
+            "collection": {
+                "@id": "nalgene versus nalgene",
+                "id": "spoon",
+                "description": "test data desc"
+            },
+            "date": {
+                "begin": null,
+                "end": null
+            }
         }
     },
     {
@@ -656,7 +787,11 @@
         "ingestType": "item",
         "sourceResource": {
             "contributor": "titlesort",
-            "title": "title DDDfield AAAardvark"
+            "title": "title DDDfield AAAardvark",
+            "date": {
+                "begin": null,
+                "end": null
+            }
         }
     },
     {
@@ -665,7 +800,11 @@
         "ingestType": "item",
         "sourceResource": {
             "contributor": "titlesort",
-            "title": "title CCCfield"
+            "title": "title CCCfield",
+            "date": {
+                "begin": null,
+                "end": null
+            }
         }
     },
     {
@@ -674,7 +813,11 @@
          "ingestType": "item",
          "sourceResource": {
              "contributor": "titlesort",
-             "title": "title AAAfield"
+             "title": "title AAAfield",
+            "date": {
+                "begin": null,
+                "end": null
+            }
          }
     },
     {
@@ -683,7 +826,11 @@
         "ingestType": "item",
         "sourceResource": {
             "contributor": "shadowsort",
-            "title": ["DDD", "AAA"]
+            "title": ["DDD", "AAA"],
+            "date": {
+                "begin": null,
+                "end": null
+            }
         }
     },
     {
@@ -692,7 +839,11 @@
         "ingestType": "item",
         "sourceResource": {
             "contributor": "shadowsort",
-            "title": ["CCC", "BBB"]
+            "title": ["CCC", "BBB"],
+            "date": {
+                "begin": null,
+                "end": null
+            }
         }
     },
     {
@@ -701,7 +852,11 @@
         "ingestType": "item",
         "sourceResource": {
             "contributor": "shadowarraysort",
-            "title": ["CCC", "AAA"]
+            "title": ["CCC", "AAA"],
+            "date": {
+                "begin": null,
+                "end": null
+            }
         }
     },
     {
@@ -710,7 +865,11 @@
         "ingestType": "item",
         "sourceResource": {
             "contributor": "shadowarraysort",
-            "title": ["AAA", "BBB"]
+            "title": ["AAA", "BBB"],
+            "date": {
+                "begin": null,
+                "end": null
+            }
         }
     },
     {
@@ -719,15 +878,31 @@
         "ingestType": "item",
         "sourceResource": {
             "contributor": "shadowarraysort",
-            "title": ["DDD", "AAA"]
+            "title": ["DDD", "AAA"],
+            "date": {
+                "begin": null,
+                "end": null
+            }
         }
     },
     {
-        "_id": "item-wood",
-        "id": "item-wood",
+        "_id": "item-meta1",
+        "id": "item-meta1",
         "ingestType": "item",
         "sourceResource": {
-            "title": "2 x 4 pieces of wood are actually 1 1/2\" by 3 1/2\" after milling"
+            "title": "2 x 4 pieces of wood are actually 1 1/2\" by 3 1/2\" after milling",
+            "date": {
+                "begin": null,
+                "end": null
+            }
+        }
+    },
+    {
+        "_id": "item-meta2",
+        "id": "item-meta2",
+        "ingestType": "item",
+        "sourceResource": {
+            "title": "My cat's name is }?harv[a:z]("
         }
     },
     {
@@ -736,7 +911,11 @@
         "ingestType": "item",
         "sourceResource": {
             "contributor": "canonicalcasesort",
-            "title": "ABSOLUTE ZERO2"
+            "title": "ABSOLUTE ZERO2",
+            "date": {
+                "begin": null,
+                "end": null
+            }
         }
     },
     {
@@ -745,7 +924,11 @@
         "ingestType": "item",
         "sourceResource": {
             "contributor": "canonicalcasesort",
-            "title": "absolute zero1"
+            "title": "absolute zero1",
+            "date": {
+                "begin": null,
+                "end": null
+            }
         }
     },
     {
@@ -754,7 +937,11 @@
         "ingestType": "item",
         "sourceResource": {
             "contributor": "canonicalsort",
-            "title": "\"Honest Abe\" Lincoln, Killing Vampires"
+            "title": "\"Honest Abe\" Lincoln, Killing Vampires",
+            "date": {
+                "begin": null,
+                "end": null
+            }
         }
     },
     {
@@ -763,7 +950,11 @@
         "ingestType": "item",
         "sourceResource": {
             "contributor": "canonicalsort",
-            "title": "[X-Files Cast Party photo]"
+            "title": "[X-Files Cast Party photo]",
+            "date": {
+                "begin": null,
+                "end": null
+            }
         }
     },
     {
@@ -772,7 +963,214 @@
         "ingestType": "item",
         "sourceResource": {
             "contributor": "canonicalsort",
-            "title": "absolutely no monkeys allowed"
+            "title": "absolutely no monkeys allowed",
+            "date": {
+                "begin": null,
+                "end": null
+            }
+        }
+    },
+    {
+        "_id": "item-stopwordsort1",
+        "id": "item-stopwordsort1",
+        "ingestType": "item",
+        "sourceResource": {
+            "contributor": "stopwordsort",
+            "title": "--- The Beaver Book",
+            "date": {
+                "begin": null,
+                "end": null
+            }
+        }
+    },
+    {
+        "_id": "item-stopwordsort2",
+        "id": "item-stopwordsort2",
+        "ingestType": "item",
+        "sourceResource": {
+            "contributor": "stopwordsort",
+            "title": "Aardvark Avenue",
+            "date": {
+                "begin": null,
+                "end": null
+            }
+        }
+    },
+    {
+        "_id": "item-canonsortB1",
+        "id": "item-canonsortB1",
+        "ingestType": "item",
+        "sourceResource": {
+            "contributor": "canonsortB",
+            "title": "[The \"Chippewa\" on Toronto Bay.] on negative 20302 Photonegative",
+            "date": {
+                "begin": null,
+                "end": null
+            }
+        }
+    },
+    {
+        "_id": "item-canonsortB2",
+        "id": "item-canonsortB2",
+        "ingestType": "item",
+        "sourceResource": {
+            "contributor": "canonsortB",
+            "title": "The \"Maine\" wreck from Merritt wrecking rig",
+            "date": {
+                "begin": null,
+                "end": null
+            }
+        }
+    },
+    {
+        "_id": "item-canonsortB3",
+        "id": "item-canonsortB3",
+        "ingestType": "item",
+        "sourceResource": {
+            "contributor": "canonsortB",
+            "title": "AAA Fixed My Flat Tire",
+            "date": {
+                "begin": null,
+                "end": null
+            }
+        }
+    },
+    {
+        "_id": "item-canonsortB4",
+        "id": "item-canonsortB4",
+        "ingestType": "item",
+        "sourceResource": {
+            "contributor": "canonsortB",
+            "title": "The \"Maine\" wreck--from the bridge",
+            "date": {
+                "begin": null,
+                "end": null
+            }
+        }
+    },
+    {
+        "_id": "item-canonsortB5",
+        "id": "item-canonsortB5",
+        "ingestType": "item",
+        "sourceResource": {
+            "contributor": "canonsortB",
+            "title": "\"----- the \"Texas\"--beside the Searchlight",
+            "date": {
+                "begin": null,
+                "end": null
+            }
+        }
+    },
+    {
+        "_id": "item-canonsortB6",
+        "id": "item-canonsortB6",
+        "ingestType": "item",
+        "sourceResource": {
+            "contributor": "canonsortB",
+            "title": "----the 'Iowa,' looking toward the 'Oregon.'",
+            "date": {
+                "begin": null,
+                "end": null
+            }
+        }
+    },
+    {
+        "_id": "item-canonsortZ1",
+        "id": "item-canonsortZ1",
+        "ingestType": "item",
+        "sourceResource": {
+            "contributor": "canonsortZ",
+            "title": null,
+            "date": {
+                "begin": null,
+                "end": null
+            }
+        }
+    },
+    {
+        "_id": "item-canonsortZ2",
+        "id": "item-canonsortZ2",
+        "ingestType": "item",
+        "sourceResource": {
+            "contributor": "canonsortZ",
+            "title": "R8 Coupe with 6-speed manual transmission",
+            "date": {
+                "begin": null,
+                "end": null
+            }
+        }
+    },
+    {
+        "_id": "item-canonsortZ3",
+        "id": "item-canonsortZ3",
+        "ingestType": "item",
+        "sourceResource": {
+            "contributor": "canonsortZ",
+            "title": "Zebras have stripes inside their ears, too.",
+            "date": {
+                "begin": null,
+                "end": null
+            }
+        }
+    },
+    {
+        "_id": "item-datefacet1",
+        "id": "item-datesfacet1",
+        "ingestType": "item",
+        "sourceResource": {
+            "title": "datefacet1",
+            "date": {
+                "begin": "1990-03-01",
+                "end": null
+            }
+        }
+    },
+    {
+        "_id": "item-datesortA1",
+        "id": "item-datesortA1",
+        "ingestType": "item",
+        "sourceResource": {
+            "title": "datesortA",
+            "date": {
+                "begin": "1990-03-01",
+                "end": null
+            }
+        }
+    },
+    {
+        "_id": "item-datesortA2",
+        "id": "item-datesortA2",
+        "ingestType": "item",
+        "sourceResource": {
+            "title": "datesortA",
+            "date": {
+                "begin": "1990-01-01",
+                "end": "1991-08-01"
+            }
+        }
+    },
+    {
+        "_id": "item-datesortA3",
+        "id": "item-datesortA3",
+        "ingestType": "item",
+        "sourceResource": {
+            "title": "datesortA",
+            "date": {
+                "begin": null,
+                "end": "1991-07-01"
+            }
+        }
+    },
+    {
+        "_id": "item-datesortA4",
+        "id": "item-datesortA4",
+        "ingestType": "item",
+        "sourceResource": {
+            "title": "datesortA",
+            "date": {
+                "begin": "1990-02-01",
+                "end": "1991-06-01"
+            }
         }
     }
 ]

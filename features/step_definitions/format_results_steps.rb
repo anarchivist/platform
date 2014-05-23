@@ -4,9 +4,14 @@ When /^I pass callback param "(.*?)" to a search for "(.*?)"$/ do |callback, key
 end
 
 Then(/^I should get a valid JSON response$/) do
-  resource_query(@resource, @params, false)
-  json = page.source
+  #Hackish test to see if we've already run a request as part of this test
+  status_code = page.status_code rescue $!
+  if status_code.is_a? Rack::Test::Error
+    resource_query(@resource, @params, false)
+  end
 
+  json = page.source
+  
   if @callback
     json =~ /^#{@callback}\((.+)\)$/m
     json = $1
@@ -15,7 +20,7 @@ Then(/^I should get a valid JSON response$/) do
   expect(json).not_to be_nil
   expect {
     JSON.parse(json) 
-  }.not_to raise_error JSON::ParserError
+  }.not_to raise_error
 end
 
 Then /^the API response should start with "(.*?)"$/ do |callback|

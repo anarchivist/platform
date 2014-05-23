@@ -1,4 +1,4 @@
-require 'v1/field'
+require_relative 'field'
 
 module V1
 
@@ -9,8 +9,15 @@ module V1
         'date_detection' => false,
         'properties' => {
           '@id' => { 'type' => 'string', 'index' => 'not_analyzed', 'sort' => 'field' },
-          'id' => { 'type' => 'string', 'index' => 'not_analyzed', 'sort' => 'field' },
+          'admin' => {
+            'properties' => {
+              'validate_on_enrich' => { 'type' => 'boolean'},
+              'ingestType' => { 'enabled' => false },
+              'ingestDate' => { 'type' => 'date' },
+            }
+          },
           'description' => { 'type' => 'string' },
+          'id' => { 'type' => 'string', 'index' => 'not_analyzed', 'sort' => 'field' },
           'title' => {
             'type' => 'multi_field',
             'fields' => {
@@ -28,19 +35,21 @@ module V1
         'properties' => {
           '@id' => { 'type' => 'string', 'index' => 'not_analyzed', 'sort' => 'field' },
           'admin' => {
-            'properties' => { #shadow_sort fields
-              'sourceResource' => {
+            'properties' => {
+              'sourceResource' => {  #shadow_sort fields
                 'properties' => {
-#                  'title' => { 'type' => 'string', 'index' => 'not_analyzed' },
-                  'title' => { 'type' => 'string', 'analyzer' => 'canonical_sort' },
+                  'title' => { 'type' => 'string', 'analyzer' => 'canonical_sort', 'null_value' => 'zzzzzzzz' },
                 }
-              }
+              },
+              'validate_on_enrich' => { 'type' => 'boolean'},
+              'ingestType' => { 'enabled' => false },
+              'ingestDate' => { 'type' => 'date' },
             }
           },
           'id' => { 'type' => 'string', 'index' => 'not_analyzed', 'sort' => 'field' },
           'sourceResource' => {
             'properties' => {
-              'id' => { 'type' => 'string', 'index' => 'not_analyzed', 'sort' => 'field' },
+              'identifier' => { 'type' => 'string', 'index' => 'not_analyzed', 'sort' => 'field' },
               'collection' => {
                 'properties' => {
                   '@id' => { 'type' => 'string', 'index' => 'not_analyzed', 'sort' => 'field', 'facet' => true },
@@ -60,8 +69,20 @@ module V1
               'date' => {
                 'properties' => {
                   'displayDate' =>  { 'type' => 'string', 'index' => 'not_analyzed'},
-                  'begin' => { 'type' => 'date', 'index' => 'not_analyzed', 'sort' => 'field', 'facet' => true, 'null_value' => '-9999' },
-                  'end' => { 'type' => 'date', 'index' => 'not_analyzed', 'sort' => 'field', 'facet' => true, 'null_value' => '9999' }
+                  'begin' => {
+                    'type' => 'multi_field',
+                    'fields' => {
+                      'begin' => { 'type' => 'date', 'sort' => 'multi_field', 'null_value' => '-9999' },
+                      'not_analyzed' => { 'type' => 'date', 'sort' => 'field', 'facet' => true }
+                    }
+                  },
+                  'end' => {
+                    'type' => 'multi_field',
+                    'fields' => {
+                      'end' => { 'type' => 'date', 'sort' => 'multi_field', 'null_value' => '9999' },
+                      'not_analyzed' => { 'type' => 'date', 'sort' => 'field', 'facet' => true }
+                    }
+                  }
                 }
               },
               'description' => { 'type' => 'string' },
@@ -83,12 +104,6 @@ module V1
               },
               'rights' => { 'type' => 'string' },
               'relation' => { 'type' => 'string' },
-              'stateLocatedIn' => {
-                'properties' => {
-                  'name' => { 'type' => 'string', 'index' => 'not_analyzed', 'sort' => 'field', 'facet' => true },
-                  'iso3166-2' => { 'type' => 'string', 'index' => 'not_analyzed', 'sort' => 'field', 'facet' => true }
-                }
-              },
               'spatial' => {
                 'properties' => {
                   'name' => {
@@ -137,6 +152,13 @@ module V1
                   'coordinates' => { 'type' => 'geo_point', 'index' => 'not_analyzed', 'sort' => 'geo_distance', 'facet' => true }
                 }
               },
+              'specType' => { 'type' => 'string', 'index' => 'not_analyzed', 'sort' => 'field', 'facet' => true },
+              'stateLocatedIn' => {
+                'properties' => {
+                  'name' => { 'type' => 'string', 'index' => 'not_analyzed', 'sort' => 'field', 'facet' => true },
+                  'iso3166-2' => { 'type' => 'string', 'index' => 'not_analyzed', 'sort' => 'field', 'facet' => true }
+                }
+              },
               'subject' => {
                 'properties' => {
                   '@id' => { 'type' => 'string', 'index' => 'not_analyzed', 'sort' => 'field', 'facet' => true },
@@ -152,8 +174,21 @@ module V1
               },
               'temporal' => {
                 'properties' => {
-                  'begin' => { 'type' => 'date', 'index' => 'not_analyzed', 'sort' => 'field', 'facet' => true, 'null_value' => '-9999' },
-                  'end'  => { 'type' => 'date', 'index' => 'not_analyzed', 'sort' => 'field', 'facet' => true, 'null_value' => '9999' }
+                  'begin' => {
+                    'type' => 'multi_field',
+                    'fields' => {
+                      'begin' => { 'type' => 'date', 'sort' => 'multi_field', 'null_value' => '-9999' },
+                      'not_analyzed' => { 'type' => 'date', 'sort' => 'field', 'facet' => true }
+                    }
+                  },
+                  'end' => {
+                    'type' => 'multi_field',
+                    'fields' => {
+                      'end' => { 'type' => 'date', 'sort' => 'multi_field', 'null_value' => '9999' },
+                      'not_analyzed' => { 'type' => 'date', 'sort' => 'field', 'facet' => true }
+                    }
+                  }
+
                 }
               },
               'title' => { 'type' => 'string', 'sort' => 'shadow' },
@@ -164,7 +199,7 @@ module V1
             'type' => 'multi_field',
             'fields' => {
               'dataProvider' => { 'type' => 'string', 'sort' => 'multi_field' },
-              'not_analyzed' => { 'type' => 'string', 'index' => 'not_analyzed', 'sort' => 'field', 'facet' => true }
+              'not_analyzed' => { 'type' => 'string', 'index' => 'not_analyzed', 'sort' => 'script', 'facet' => true }
             }
           },
           'hasView' => {
@@ -186,8 +221,8 @@ module V1
               }                      
             }
           },
-          'isShownAt' => { 'type' => 'string', 'index' => 'not_analyzed', 'sort' => 'field', 'facet' => true },
-          'object' => { 'type' => 'string', 'index' => 'not_analyzed', 'sort' => 'field', 'facet' => true },
+          'isShownAt' => { 'type' => 'string', 'index' => 'not_analyzed', 'sort' => 'field' },
+          'object' => { 'type' => 'string', 'index' => 'not_analyzed', 'sort' => 'field' },
           'provider' => {
             'properties' => {
               '@id' => { 'type' => 'string', 'index' => 'not_analyzed', 'sort' => 'field', 'facet' => true },
@@ -256,8 +291,9 @@ module V1
 
       all_fields(resource).each do |field|
         names << field.name
-        # special handling for date ranges on this subfield's parent field name
-        if field.date?
+        
+        # Special handling for straight date or multi_field->date fields
+        if field.date? || field.multi_field_date?
           names << field.name.sub(/\.end$/, '.after') if field.name =~ /\.end$/
           names << field.name.sub(/\.begin$/, '.before') if field.name =~ /\.begin$/
         elsif field.geo_point?

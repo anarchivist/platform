@@ -23,6 +23,11 @@ Given(/^the default test field boosts are defined$/) do
 
 end
 
+When(/^I make an empty item\-search and the search endpoint times out$/) do
+  @resource = 'item'
+  V1::Item.stub(:wrap_results) { raise RestClient::RequestTimeout }
+end
+
 When /^I make an empty ((\w+)-)?search$/ do |_, resource|
   @resource = resource
 end
@@ -43,7 +48,7 @@ When /^sort by pin "(.*?)"$/ do |arg1|
   @params['sort_by_pin'] = arg1
 end
 
-When(/^order the sort by "(.*?)"$/) do |arg1|
+When(/^set sort_order to (\w+)$/) do |arg1|
   @params['sort_order'] = arg1
 end
 
@@ -55,7 +60,8 @@ Then /^I should get http status code "(.*?)"$/ do |arg1|
   end
   
   if page.status_code.to_s != arg1
-    puts "Server Response: #{ JSON.parse(page.source)['message'] || page.source }"
+    puts "Params were    : #{ @params }"
+    puts "Server Response: #{ page.source }"
   end
 
   expect(page.status_code.to_s).to eq(arg1)
@@ -63,7 +69,7 @@ end
 
 Then /^I should get http status code "(.*?)" from the QA app$/ do |arg1|
   if page.status_code.to_s != arg1
-    puts "Server Response: #{ JSON.parse(page.source)['message'] || page.source }"
+    puts "Server Response: #{ page.source }"
   end
 
   expect(page.status_code.to_s).to eq(arg1)

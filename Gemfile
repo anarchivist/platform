@@ -1,8 +1,8 @@
 source 'https://rubygems.org'
 
 gem 'rails', '~> 3.2.15'
-gem 'unicorn', '4.6.3'
-gem 'rubygems-bundler', '1.1.1'
+gem 'unicorn', '~> 4.8.3'
+gem 'rubygems-bundler', '~> 1.4.3'
 gem 'pg', :require => 'pg'
 gem 'sqlite3'  
 gem 'devise', '2.1.2'
@@ -19,7 +19,7 @@ group :assets do
   gem 'coffee-rails', '~> 3.2.1'
   gem 'therubyracer', :platforms => :ruby
   gem 'uglifier', '>= 1.0.3'
-  gem 'twitter-bootstrap-rails'
+  gem 'twitter-bootstrap-rails', '~> 2.2.7'
   gem 'less-rails'
 end
 

@@ -1,4 +1,3 @@
-require 'v1/application_controller'
 require 'digest/md5'
 
 #TODO: eliminate new duplication between resources here and break this into ItemsController and CollectionsController (to invert the current topology)
@@ -7,9 +6,9 @@ require 'digest/md5'
 module V1
 
   class SearchController < ApplicationController
-    before_filter :authenticate, :except => [:repo_status]  #, :links  #links is just here for testing auth
-    rescue_from Errno::ECONNREFUSED, :with => :connection_refused
+    before_filter :authenticate
     rescue_from Exception, :with => :generic_exception_handler
+    rescue_from Errno::ECONNREFUSED, :with => :connection_refused
 
     def base_cache_key(resource, action, unique_key='')
       # ResultsCache
@@ -31,6 +30,17 @@ module V1
       base_cache_key(resource, action, key_hash.sort.to_s)
     end
 
+    def items_context
+      begin
+        results = Rails.cache.fetch('items_context', :raw => true) do
+          Item.json_ld_context
+        end
+      rescue SearchError => e
+        results = e
+      end
+      render_search_results(results, params)
+    end
+
     def fetch_cache_key(resource, params)
       # ResultsCache
       action = params['action']
@@ -42,11 +52,26 @@ module V1
     def items
       begin
         results = Rails.cache.fetch(search_cache_key('items', params), :raw => true) do
-          Item.search(params).to_json
+          begin
+            Item.search(params).to_json
+          rescue BadRequestSearchError => e
+            # This requests's params will always return this error, so cache it as such
+            e
+          end
         end
-        render :json => render_as_json(results, params)
+        # render :json => render_as_json(results, params)
       rescue SearchError => e
-        render_error(e, params)
+        # render_error(e, params)
+        results = e
+      end
+      render_search_results(results, params)
+    end
+
+    def render_search_results(results, options)
+      if results.is_a? SearchError
+        render_error(results, params)
+      else
+        render :json => render_as_json(results, params)
       end
     end
 
@@ -61,15 +86,31 @@ module V1
       end
     end
 
+    def collections_context
+      begin
+        results = Rails.cache.fetch('collections_context', :raw => true) do
+          Collection.json_ld_context
+        end
+      rescue SearchError => e
+        results = e
+      end
+      render_search_results(results, params)
+    end
+
     def collections
       begin
         results = Rails.cache.fetch(search_cache_key('collections', params), :raw => true) do
-          Collection.search(params).to_json
+          begin
+            Collection.search(params).to_json
+          rescue BadRequestSearchError => e
+            # This requests's params will always return this error, so cache it as such
+            e
+          end
         end
-        render :json => render_as_json(results, params)
       rescue SearchError => e
-        render_error(e, params)
+        results = e
       end
+      render_search_results(results, params)
     end
 
     def fetch_collections
@@ -84,42 +125,8 @@ module V1
 
     end
 
-    def render_as_json(results, params)
-      # Handles optional JSONP callback param
-      conversion = results.is_a?(Hash) ? :to_json : :to_s
-
-      if params['callback'].present?
-        params['callback'] + '(' + results.send(conversion) + ')'
-      else
-        results.send(conversion)
-      end
-    end
-
-    def repo_status
-      status = :ok
-      message = nil
-
-      begin
-        response = JSON.parse(Repository.service_status(true))
-        
-        if response['doc_count'].to_s == ''
-          status = :error
-          message = response.to_s
-        end
-      rescue Errno::ECONNREFUSED => e
-        status = :service_unavailable
-        message = e.to_s
-      rescue => e
-        status = :error
-        message = e.to_s
-      end
-
-      logger.warn "REPO_STATUS Check: #{message}" if message
-      head status
-    end
-    
     def connection_refused(exception)
-      logger.warn "search_controller#connection_refused handler firing"
+      logger.warn "#{self.class}.connection_refused handler firing"
       render_error(ServiceUnavailableSearchError.new, params)
     end
 
@@ -127,10 +134,6 @@ module V1
       logger.warn "#{self.class}.generic_exception_handler firing for: #{exception.class}: #{exception}"
       logger.warn "#{exception.backtrace.first(15).join("\n")}\n[SNIP]"
       render_error(InternalServerSearchError.new, params)
-    end
-
-    def render_error(e, params)
-      render :json => render_as_json({:message => e.message}, params), :status => e.http_status
     end
 
     def links; end

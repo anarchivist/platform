@@ -1,7 +1,11 @@
 V1::Engine.routes.draw do
   # All these routes are relative to this engine's mount point defined in the main app
-  # E.g. if this engine is mounted at "/v1", then 'get "/search"' in this routes.rb
-  # would match "/v1/search"
+  # E.g. if this engine is mounted at "/v2", then 'get "/search"' in this routes.rb
+  # would match "/v2/search"
+
+  # JSON-LD context
+  get "/items/context" => "search#items_context"
+  get "/collections/context" => "search#collections_context"
 
   # Search Items
   #NOTE: We cannot use the defaults->format block until the format field has been renamed in the schema
@@ -24,15 +28,14 @@ V1::Engine.routes.draw do
   # not fully implemented yet
   #get "/api_key(.:format)/*owner" => "api_key#show", :defaults => { :format => 'json' }
 
-  # place-holder
+  # place-holder for HTTP GET request that should be PUT
   get "/api_key(.:format)/*owner" => "api_key#show_placeholder", :defaults => { :format => 'json' }
-
   # friendly error message
   get "/api_key" =>  "api_key#index"
-  
-  # General Utils
-  get "/repo/status" => "search#repo_status"
-  # get "/repository/status" => "repository#status", :defaults => { :format => 'json' }
-  # get "/search/status" => "search#status", :defaults => { :format => 'json' }
 
+  # Monitoring endpoints
+  get "/status/repository" => "status#repository", :defaults => { :format => 'json' }
+  # get "/status/river" => "status#river", :defaults => { :format => 'json' }
+  # get "/status/search_engine" => "status#search_engine", :defaults => { :format => 'json' }
+  # get "/status/search_shards" => "status#search_shards", :defaults => { :format => 'json' }
 end

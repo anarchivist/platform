@@ -14,13 +14,10 @@ When(/^provide a valid API key$/) do
   @params['api_key'] = @valid_api_key
 end
 
-When(/^I visit the QA app homepage$/) do
-  # TODO: try http://stackoverflow.com/questions/6536503/capybara-with-subdomains-default-host
-  #visit '/qa/compare'
-end
-
-When(/^I request a new api key for "(.*?)" but use HTTP GET$/) do |email|
-  visit "/v2/api_key/#{email}"
+When(/^I request a new api key for "(.*?)" using (\w+)$/) do |email, method|
+  url = "/v2/api_key/#{email}"
+  method = method.downcase.to_sym  
+  page.driver.send(method, url)
 end
 
 Then(/^I should get a JSON message containing "(.*?)"$/) do |message|

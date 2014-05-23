@@ -1,4 +1,5 @@
 require_relative '../schema'
+require_relative '../search_error'
 require_relative '../field_boost'
 require 'active_support/core_ext'
 
@@ -8,9 +9,9 @@ module V1
 
     module Query
 
-      # not escaped, but probably could be: '&&', '||'
+      # not escaped, but probably could be if escape code was tweaked: '&&', '||'
       # not escaped, because they don't seem to need it: '+', '-',
-      ESCAPED_METACHARACTERS = [ '"', '!', '(', ')', '{', '}', '[', ']', '^', '~', '?', ':', '\\' ]
+      ESCAPED_METACHARACTERS = [ '!', '(', ')', '{', '}', '[', ']', '^', '~', '?', ':' ]  # '"',
 
       def self.execute_empty_search(search)
         # We need to be explicit with an empty search
@@ -23,18 +24,17 @@ module V1
         date_range_queries = date_range_queries(params)
         # ids_queries = ids_query(resource, params)
         
+        # Only call search.query.boolean if we have some queries to pass it.
+        # Otherwise we'll get incorrect search results.
         if (string_queries + date_range_queries).empty?
           execute_empty_search(search)
           return false
         end
 
-        # Only call search.query.boolean if we have some queries to pass it.
-        # Otherwise we'll get incorrect search results.
         search.query do |query|
           # if ids_queries.any?
           #   query.ids *ids_queries
           # end
-
           query.boolean do |boolean|
 
             string_queries.each do |query_string|
@@ -65,17 +65,25 @@ module V1
           tmp = $1
           quoted = true
         end
+
         escaped_metacharacters.each do |mc|
-          tmp.gsub!(mc, '\\' + mc.split('').join('\\\\') )
+          # Try: tmp.gsub!(/(?=#{mc})/, '\\') #=> Foo\ Bar\!
+          tmp.gsub!(mc, '\\' + mc)
+        end
+        
+        # How do we handle this query: '"Toast" AND "Bread Trucks"'
+        # and also handle: '1 and 3/8" boards'
+        if tmp.count('"') % 2 == 1
+          tmp.gsub!(/"/, '\\"')
+          tmp.gsub!(/\\{2,}"/, '\\"')
         end
         
         quoted ? %Q("#{tmp}") : tmp
       end
 
       def self.string_queries(resource, params)
-        # Only handles 'q' and non-geo field searches
-
         query_strings = []
+
         params.each do |name, value|
           # Skip all query types that are handled elsewhere
           next if value.to_s == ''
@@ -85,7 +93,7 @@ module V1
             fields = field_boost_for_all(resource) + ['_all']
           else
             field = field_for(resource, name)
-            next if field.nil? || field.date? || field.geo_point?
+            next if field.nil? || field.date? || field.multi_field_date? || field.geo_point?
 
             fields = field_boost_deep(resource, field)
           end
@@ -146,13 +154,32 @@ module V1
         }
       end
 
+      def self.parse_date_query(value)
+        #TODO: consolidate with filter.rb's version of this
+        # Returns nil for values don't match any of our partial or full date formats
+        # Does not detect stuff like 1998-02-31
+
+        # As a courtesy, remove double-quote wrapping
+        date = value =~ /^"(.+)"$/ ? $1 : value
+        if date.split('-').any? {|x| x.to_i == 0}
+          nil
+        else
+          date
+        end
+      end
+
+
       def self.date_range_queries(params)
-        #TODO: Reimplement as a filter
+        #TODO: Reimplement as a filter like Filter.date_range()
         ranges = []
         params.each do |name, value|
           next unless name =~ /^(.+)\.(before|after)$/
           field_name = $1
           modifier = $2
+
+          if parse_date_query(value).nil?
+            raise BadRequestSearchError, "Invalid date in #{name} field"
+          end
 
           # Note the references to 9999 and -9999. Those exclude false positives from
           # null values in the field in question. See schema.rb where those defaults are defined.

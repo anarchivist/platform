@@ -1,6 +1,4 @@
-require_relative '../../app/models/v1/api_key'
 require_relative 'search_engine'
-require 'json'
 require 'couchrest'
 require 'httparty'
 
@@ -8,8 +6,9 @@ module V1
 
   module Repository
 
-    API_KEY_DATABASE = 'dpla_api_auth'
-
+    DEFAULT_API_AUTH_DATABASE = 'dpla_api_auth'
+    DEFAULT_DASHBOARD_DATABASE = 'dashboard'
+    
     def self.fetch(ids)
       # Accepts an array of ids or a string containing a comma separated list of ids
       ids = ids.split(/,\s*/) if ids.is_a?(String)
@@ -51,8 +50,12 @@ module V1
       SearchEngine.recreate_river if include_river
       recreate_users
       import_test_api_keys
-      import_test_dataset
       create_api_auth_views
+    end
+
+    def self.recreate_env_with_docs(include_river=false)
+      recreate_env(include_river)
+      import_test_dataset
       puts "CouchDB docs/views: #{ doc_count }"
     end
 
@@ -68,6 +71,16 @@ module V1
     def self.import_data_file(file)
       import_docs(SearchEngine.process_input_file(file, false))
     end
+
+    def self.save_doc(doc)
+      begin
+        admin_cluster_database.save_doc doc
+      rescue RestClient::BadRequest => e
+        error = JSON.parse(e.response) rescue {}
+        raise Exception, "Error: #{error['reason'] || e.to_s}"
+      end
+    end
+    
 
     def self.import_docs(docs)
       db = admin_cluster_database
@@ -112,25 +125,6 @@ module V1
       raise "Error: #{result}" unless result['ok']
     end
 
-    #TODO: Move api management methods into a ApiAuth module
-    def self.create_api_key(owner)
-      key = ApiKey.new(
-                       'db' => admin_cluster_auth_database,
-                       'owner' => owner
-                       )
-      key.save
-      key
-    end
-
-    def self.find_api_key_by_owner(owner)
-      key = ApiKey.find_by_owner(admin_cluster_auth_database, owner)
-      key ? key['_id'] : nil
-    end
-    
-    def self.authenticate_api_key(key_id)
-      ApiKey.authenticate(admin_cluster_auth_database, key_id)
-    end
-
     def self.import_test_api_keys(owner=nil)
       # rake task entry point
       db = admin_cluster_auth_database
@@ -169,7 +163,7 @@ module V1
       end
 
       begin
-        db.create!
+        db.create! && sleep(3)
       rescue StandardError => e
         raise "DB Create Error: #{e}"
       end
@@ -257,8 +251,7 @@ module V1
         
         auth_doc.merge!(current_auth) if current_auth
         auth_result = db.save_doc(auth_doc)
-        # puts "Auth OK: #{auth_result.to_s}"
-        raise "Error: #{auth_result}" unless auth_result['ok']
+        raise "Error: #{auth_result} (current_auth is: #{current_auth})" unless auth_result['ok']
       end
     end
     
@@ -280,7 +273,7 @@ module V1
     end
 
     def self.repo_name
-      Config::REPOSITORY_DATABASE
+      Config.dpla['repository'].fetch('documents_database', Config::REPOSITORY_DATABASE)
     end
 
     def self.cluster_host
@@ -306,7 +299,13 @@ module V1
     end
 
     def self.admin_cluster_auth_database
-      database(cluster_endpoint('admin', API_KEY_DATABASE))
+      name = Config.dpla['repository'].fetch('api_auth_database', DEFAULT_API_AUTH_DATABASE)
+      database(cluster_endpoint('admin', name))
+    end
+
+    def self.admin_cluster_dashboard_database
+      name = Config.dpla['repository'].fetch('dashboard_database', DEFAULT_DASHBOARD_DATABASE)
+      database(cluster_endpoint('admin', name))
     end
 
     def self.admin_cluster_database

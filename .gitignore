@@ -8,6 +8,7 @@ vendor/bundle/
 logs/
 public/assets/
 pgsql/
+.bundle/
 *.swp
 .sass-cache/
 apache2/
@@ -16,4 +17,4 @@ erl_crash.dump
 *.swo
 ingestion
 config/unicorn.rb
-.bundle/
+public/robots.txt

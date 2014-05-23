@@ -1,9 +1,9 @@
-require 'v1/searchable'
+require_relative 'searchable'
 
 module V1
 
   module Item
-    extend V1::Searchable
+    extend Searchable
     
     def self.resource
       'item'

@@ -26,7 +26,6 @@ module Dpla
     config.autoload_paths += Dir["#{config.root}/contentqa/lib/**/"]
 
     # Set cache_store based on dpla.yml settings
-    #TODO: Could we do this in a v1 initializer?
     config.cache_store = V1::Config.cache_store
 
     # Only load the plugins named here, in the order given (default is alphabetical).

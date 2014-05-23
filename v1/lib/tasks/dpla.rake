@@ -1,15 +1,11 @@
 require 'v1/search_engine'
 require 'v1/repository'
+require 'v1/api_auth'
 
 namespace :v1 do
 
   # NOTE: Any task that calls a method that internally makes calls to Tire, must pass
   # the :environment symbol in the task() call so the Tire initializer gets called.
-
-  desc "Tests river by posting test doc to CouchDB and verifying it in ElasticSearch"
-  task :test_river => :environment do
-    V1::SearchEngine::River.test_river
-  end
 
   desc "Updates existing ElasticSearch schema *without* deleting the current index"
   task :update_search_schema => :environment do
@@ -24,10 +20,10 @@ namespace :v1 do
 
   desc "Creates new ElasticSearch index"
   task :create_search_index => :environment do
-    V1::SearchEngine.create_index 'foo'
+    V1::SearchEngine.create_index
   end
 
-  desc "Lists existing ElasticSearch indices"
+  desc "Lists ElasticSearch indices"
   task :search_indices => :environment do
     V1::SearchEngine.display_indices
   end
@@ -53,22 +49,11 @@ namespace :v1 do
     V1::SearchEngine.create_and_deploy_index
   end
 
-  desc "Re-creates ElasticSearch index"
-  task :recreate_search_index => :environment do
-    V1::SearchEngine.recreate_index!
-  end
-
-  desc "Re-creates ElasticSearch index, river and re-populates index with test dataset"
-  task :recreate_search_env => :environment do
-    V1::SearchEngine.recreate_env!
-  end
-
   desc "Re-creates ElasticSearch river for the currently deployed index"
   task :recreate_river => :environment do
     V1::SearchEngine::River.recreate_river
   end
 
-  #TODO: This is confusing to use.
   desc "Creates new ElasticSearch river, pointed at $index (defaults to currently deployed index)"
   task :create_river, [:index,:river] => :environment do |t, args|
     V1::SearchEngine::River.create_river('index' => args.index, 'river' => args.river)
@@ -79,14 +64,39 @@ namespace :v1 do
     V1::SearchEngine::River.delete_river or puts "River does not exist, so nothing to delete"
   end
 
+  desc "Displays the river's current indexing velocity"
+  task :river_velocity, [:river] => :environment do |t, args|
+    puts "River velocity: " + V1::SearchEngine::River.current_velocity(args.river)
+  end
+
+  desc "Lists ElasticSearch rivers"
+  task :river_list => :environment do
+    puts V1::SearchEngine::River.list_all
+  end
+
   desc "Gets ElasticSearch river status"
   task :river_status do
-    puts V1::SearchEngine::River.service_status
+    puts V1::SearchEngine::River.verify_river_status
+  end
+
+  desc "Gets ElasticSearch river last_sequence"
+  task :river_last_sequence do
+    puts V1::SearchEngine::River.last_sequence
+  end
+
+  desc "Tests river by posting test doc to CouchDB and verifying it in ElasticSearch"
+  task :river_test => :environment do
+    V1::SearchEngine::River.river_test
   end
 
   desc "Gets ElasticSearch search cluster status"
   task :search_status do
     puts V1::SearchEngine.service_status
+  end
+
+  desc "Gets ElasticSearch search shards and statuses"
+  task :search_shard_status => :environment do
+    V1::SearchEngine.display_shard_status
   end
 
   desc "Gets number of docs in search index"
@@ -104,15 +114,26 @@ namespace :v1 do
     puts V1::SearchEngine.search_schema
   end
 
-  desc "Show API 'is_valid?' auth for a key"
+  desc "Displays the current schema as defined by the API. This is the canonical API schema."
+  task :show_api_schema do
+    puts JSON.pretty_generate(V1::Schema::ELASTICSEARCH_MAPPING)
+  end
+
+  desc "Show API key by [key_id] or [email]"
   task :show_api_auth, [:key] do |t, args|
-    puts "Authenticated?: #{ V1::Repository.authenticate_api_key(args.key) }"
+    puts (V1::ApiAuth.show_api_auth(args.key) || 'not found').to_s
+  end
+  
+  desc "Toggle the disabled status for an API key"
+  task :toggle_api_auth, [:key] => :environment do |t, args|
+    key = V1::ApiAuth.toggle_api_auth(args.key)
+    puts "API key is now: #{key.disabled? ? 'Disabled' : 'Enabled' }"
   end
   
   desc "Deletes cached API auth for a single api_key"
   task :clear_cached_api_auth, [:key] => :environment do |t, args|
-    previous = V1::ApiKey.clear_cached_auth(args.key)
-    puts "Done. (was '#{previous}')"
+    previous = V1::ApiAuth.clear_cached_auth(args.key)
+    puts "Done. Cached value was: #{previous || 'nil'}"
   end
   
   desc "Displays the CouchDB repository_endpoint the API is configured to use"
@@ -137,11 +158,6 @@ namespace :v1 do
     V1::Repository.create_api_auth_views
   end
   
-  desc "Imports test API keys into auth token database"
-  task :import_test_api_keys, [:owner] do |t, args|
-    V1::Repository.import_test_api_keys(args.owner)
-  end
-  
   desc "Re-creates read-only CouchDB user and re-assigns roles"
   task :recreate_repo_users do
     V1::Repository.recreate_users
@@ -152,7 +168,7 @@ namespace :v1 do
     puts V1::Repository.doc_count
   end
 
-  desc "Re-creates CouchDB database, users, river and re-populates Couch with test dataset"
+  desc "Re-creates CouchDB database, users, API keys and river"
   task :recreate_repo_env => :environment do
     V1::Repository.recreate_env(true)
   end

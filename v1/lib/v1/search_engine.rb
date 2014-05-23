@@ -18,6 +18,43 @@ module V1
       ]
     end
 
+    def self.display_shard_status
+      status = shard_status
+      puts "Shard allocation for index: #{status['index']}"
+      status['assigned'].sort_by {|k,v| k}.each do |node, list|
+        puts "#{node}: #{list.join(', ')}"
+      end
+
+      status['shard_state'].keys.select {|s| s != 'STARTED'}.each do |state|
+        puts "#{ state }: #{ status['shard_state'][state].join(', ') }"
+      end
+    end
+    
+    def self.shard_status
+      res = HTTParty.get(Config.search_endpoint + '/_cluster/state').parsed_response
+      
+      nodes = res['nodes'].inject({}) {|memo,(code,body)| memo[code] = body['name']; memo}
+      shards_by_nodes = nodes.inject({}) {|memo, (code,name)| memo[name] = [] ; memo}
+
+      current = alias_to_index(Config.search_index)
+
+      shard_state = {}
+      res['routing_table']['indices'][current]['shards'].each do |shard_id, shardlist|
+        shardlist.each do |status|
+          shard = status['primary'] ? "#{status['shard']}" : "#{status['shard']}r"
+          state = status['state']
+
+          shard_state[ state ] ||= []
+          shard_state[ state ] << shard
+          if state != 'UNASSIGNED'
+            shards_by_nodes[ nodes[ status['node'] ] ] << shard
+          end
+        end
+      end
+
+      { 'index' => current, 'assigned' => shards_by_nodes, 'shard_state' => shard_state }
+    end
+
     def self.display_indices
       endpoint_config_check
       
@@ -30,11 +67,6 @@ module V1
     def self.indices
       indices = HTTParty.get(Config.search_endpoint + '/_status').parsed_response['indices']
       indices.keys.select {|index| index != '_river'}.sort
-    end
-
-    def self.alias_to_index(alias_name)
-      alias_object = Tire::Alias.find(alias_name)
-      alias_object ? alias_object.index.first : nil
     end
 
     def self.recreate_env!
@@ -100,10 +132,6 @@ module V1
     def self.recreate_index!
       endpoint_config_check
       
-      # Delete the river here to avoid it tripping all over itself and getting
-      # confused when we create it later
-      delete_river
-      
       index_name = Config.search_index
       delete_index(index_name)
       sleep 1
@@ -111,10 +139,10 @@ module V1
     end
 
     def self.delete_index(name)
-      Tire.index(name).delete
+      delete_river(name)
+      Tire.index(name).delete 
       puts "Deleted index '#{name}'"
     end
-    
 
     def self.create_index_with_river
       endpoint_config_check
@@ -202,13 +230,10 @@ module V1
     end
 
     def self.create_and_deploy_index
+      # returns name of previously deployed index 
       index = create_index
       sleep 4
-      previous_index = deploy_index(index)
-      if previous_index
-        sleep 2
-        safe_delete_index(previous_index)
-      end
+      deploy_index(index)
     end
 
     def self.deploy_index(index)
@@ -232,7 +257,7 @@ module V1
 
     def self.move_alias_to(index)
       alias_name = Config.search_index
-      current_alias = Tire::Alias.find(alias_name)
+      current_alias = find_alias(alias_name)
 
       if current_alias.nil?
         puts "Expected alias '#{alias_name}' not found. Creating..."
@@ -258,6 +283,15 @@ module V1
 
     def self.create_alias(options)
       Tire::Alias.new(options).save
+    end
+
+    def self.find_alias(alias_name)
+      Tire::Alias.find(alias_name)
+    end
+    
+    def self.alias_to_index(alias_name)
+      alias_object = find_alias(alias_name)
+      alias_object ? alias_object.index.first : nil
     end
 
     def self.recreate_river
